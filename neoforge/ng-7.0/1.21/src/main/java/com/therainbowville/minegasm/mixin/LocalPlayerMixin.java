@@ -34,7 +34,7 @@ public class LocalPlayerMixin {
         }
 
         if (amount > 0) {
-            LivingDamageEvent event = new LivingDamageEvent.Post((LocalPlayer) (Object) this, new DamageContainer(source, amount));
+            LivingDamageEvent.Post event = new LivingDamageEvent.Post((LocalPlayer) (Object) this, new DamageContainer(source, amount));
             ClientEventHandler.onHurt(event);
         }
     }

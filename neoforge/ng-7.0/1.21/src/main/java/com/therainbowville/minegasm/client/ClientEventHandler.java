@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@EventBusSubscriber(modid = Minegasm.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Minegasm.MOD_ID)
 public class ClientEventHandler {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
@@ -94,7 +94,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent event) {
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
         try {
             if (isPlayer(event.getEntity())) {
                 Player player = event.getEntity();
@@ -122,7 +122,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent.Post event) {
         if (tickCounter >= 0) {
             if (tickCounter != clientTickCounter) {
                 clientTickCounter = tickCounter;
@@ -154,7 +154,7 @@ public class ClientEventHandler {
     }
 
     @SubscribeEvent
-    public static void onHurt(LivingDamageEvent event) {
+    public static void onHurt(LivingDamageEvent.Post event) {
         if (isPlayer(event.getEntity())) {
             ((VibrationStateHurt) vibrationStates.get("hurt")).onHurt();
         }

@@ -263,6 +263,7 @@ class CustomModeConfigScreen extends Screen {
 
             this.addRenderableWidget(new Button.Builder(Component.literal("Reset Values"), button -> {
                         ConfigHolder.getClientInstance().resetConfigCustom();
+                        ConfigHelper.bakeClient();
                         IntensitiySliderBar.refreshAllValues();
                     })
                             .pos(this.width / 2 - 155, this.height - 27)
@@ -316,7 +317,6 @@ class CustomModeConfigScreen extends Screen {
 
         @Override
         public void applyValue() {
-//            LOGGER.info("applyValue");
             //responder.accept(this.getValueInt());
             try {
                 fieldReference.set(null, this.getValueInt());

@@ -88,11 +88,11 @@ public class PauseMenuButton extends Button {
         }
     }
 
-    @EventBusSubscriber(modid = Minegasm.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = Minegasm.MOD_ID)
     public class PauseMenuButtonScreen {
 
         @SubscribeEvent
-        public static void onGuiInit(ScreenEvent.Init event) {
+        public static void onGuiInit(ScreenEvent.Init.Post event) {
             if (event.getScreen() instanceof PauseScreen) { // Make sure GUI is Escape menu
                 MenuRows menu = MenuRows.INGAME_MENU;
                 int rowIdx = 3;

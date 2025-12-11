@@ -1,8 +1,11 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java-library'
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
+    id 'com.gradleup.shadow' version '9.3.0'
     id 'net.neoforged.gradle.userdev' version '7.0.145'
 }
 
@@ -58,11 +61,11 @@ runs {
 
     client {
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
 
     server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         programArgument '--nogui'
     }
 
@@ -70,7 +73,7 @@ runs {
     // By default, the server will crash when no gametests are provided.
     // The gametest system is also enabled by default for other run configs under the /test command.
     gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
     }
 
     data {
@@ -93,6 +96,11 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
 dependencies {
     // Specify the version of Minecraft to use.
     // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
@@ -101,7 +109,7 @@ dependencies {
     // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
     // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
     implementation "net.neoforged:neoforge:${neo_version}"
-    implementation 'io.github.blackspherefollower:buttplug4j.connectors.jetty.websocket.client:3.1.105'
+    shade 'io.github.blackspherefollower:buttplug4j.connectors.jetty.websocket.client:3.1.105'
 
     implementation 'com.therainbowville.minegasm:common:0.1.0'
 
@@ -166,6 +174,27 @@ publishing {
         }
     }
 }
+
+shadowJar {
+    dependsOn('compileJava')
+    from sourceSets.main.output
+    configurations = [project.configurations.runtimeClasspath]
+    exclude 'META-INF/MANIFEST.MF'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+}
+
+tasks.named('shadowJar', ShadowJar) {
+//    enableRelocation true
+//    relocationPrefix "com.therainbowville.repack"
+    relocate 'io.github.blackspherefollower:buttplug4j.connectors.jetty.websocket.client:3.1.105', "com.therainbowville.repack.buttplug4j"
+    archiveClassifier = "${minecraft_version}-Neo-${neo_version}"
+    configurations = [project.configurations.shade]
+    mergeServiceFiles()
+}
+
+assemble.dependsOn shadowJar
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

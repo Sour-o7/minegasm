@@ -1,6 +1,7 @@
 package com.therainbowville.minegasm.common;
 
 import com.therainbowville.minegasm.config.ConfigHolder;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -14,10 +15,10 @@ public class Minegasm {
     public static final String NAME = "Minegasm";
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public Minegasm(ModContainer container) {
+    public Minegasm(IEventBus modEventBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.CLIENT, ConfigHolder.CLIENT_SPEC);
         container.registerConfig(ModConfig.Type.SERVER, ConfigHolder.SERVER_SPEC);
-
-        NeoForge.EVENT_BUS.register(this);
+        
+//        NeoForge.EVENT_BUS.register(this);
     }
 }
