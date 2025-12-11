@@ -5,7 +5,8 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    //id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.3.0'
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
@@ -217,8 +218,9 @@ shadowJar {
 }
 
 tasks.named('shadowJar', ShadowJar) {
-    enableRelocation true
-    relocationPrefix "com.therainbowville.repack"
+//    enableRelocation true
+//    relocationPrefix "com.therainbowville.repack"
+    relocate 'io.github.blackspherefollower:buttplug4j.connectors.jetty.websocket.client:3.1.105', "com.therainbowville.repack.buttplug4j"
     archiveClassifier = "${minecraft_version}-Forge-${forge_version}"
     configurations = [project.configurations.shade]
     mergeServiceFiles()
