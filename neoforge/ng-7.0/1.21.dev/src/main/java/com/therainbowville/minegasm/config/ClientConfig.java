@@ -29,8 +29,6 @@ public final class ClientConfig {
     public final EventConfigSpec xpChangeConfig;
     public final EventConfigSpec advancementConfig;
     public final EventConfigSpec fishingConfig;
-    
-    public int ticksPerSecond = 20;
 
     public void fromMinegasmConfig(MinegasmConfigClient src) {
         serverUrl.set(src.serverUrl);
@@ -63,7 +61,6 @@ public final class ClientConfig {
         out.receiveVibrationsFromOthers = receiveVibrationsFromOthers.get();
 
         out.tickFrequency = tickFrequency.get();
-        out.ticksPerSecond = Math.max(0, Math.round(20f / out.tickFrequency.getInt()));
         
         out.attackConfig = attackConfig.toEventConfig();
         out.hurtConfig = hurtConfig.toEventConfig();

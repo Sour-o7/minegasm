@@ -1,5 +1,6 @@
 package com.therainbowville.minegasm.gui;
 
+import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmGroupMember;
 
 import java.util.ArrayList;
@@ -41,6 +42,11 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
             this.addEntry(entry);
         });
     }
+    
+    public void populateFromGroup(MinegasmGroup group) {
+        group.getPlayers().forEach(p -> playerList.add(new PlayerEntry(screen, p)));
+        refreshEntries();
+    }
    
     public void addPlayerEntry(MinegasmGroupMember player) {
         playerList.add(new PlayerEntry(screen, player));
@@ -49,7 +55,7 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
 
     public void setSelected(@Nullable PlayerSelectionList.Entry entry) {
         super.setSelected(entry);
-        this.screen.onSelectedChange();
+        //this.screen.onSelectedChange();
     }
 
    /*public boolean keyPressed(int var1, int var2, int var3) {
@@ -80,23 +86,21 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
 
     public static class PlayerEntry extends PlayerSelectionList.Entry {
         private final GroupScreen screen;
-        private final MinegasmGroupMember player;
+        public final MinegasmGroupMember player;
         protected final Minecraft minecraft;
         private long lastClickTime;
-        private final Button rewardButton;
-        private final Button manageButton;
 
 
         protected PlayerEntry(GroupScreen screen, MinegasmGroupMember player) {
             this.screen = screen;
             this.minecraft = Minecraft.getInstance();
             this.player = player;
-            rewardButton = new Button.Builder(Component.literal("R"), button -> {
-                this.screen.setSelected(this);
-            }).pos(0, 0).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
-            manageButton = new Button.Builder(Component.literal("M"), button -> {
-                this.screen.setSelected(this);
-            }).pos(0, 0).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
+            //rewardButton = new Button.Builder(Component.literal("R"), button -> {
+            //    this.screen.setSelected(this);
+            //}).pos(0, 0).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
+            //manageButton = new Button.Builder(Component.literal("M"), button -> {
+            //    this.screen.setSelected(this);
+            //}).pos(0, 0).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
         }
 
         public void render(GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
@@ -118,17 +122,6 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
             };
             
             graphics.drawString(this.minecraft.font, subtext, left + 24, top + 12, -8355712, false);
-            
-            // Todo: && there isn't a selected item
-            if (isMouseOver) {
-                rewardButton.setX(left + width - 20 - 7);
-                rewardButton.setY(top + (height - 20) / 2);
-                rewardButton.render(graphics, mouseX, mouseY, partialTick);
-                
-                manageButton.setX(left + width - 40 - 7 - 4);
-                manageButton.setY(top + (height - 20) / 2);
-                manageButton.render(graphics, mouseX, mouseY, partialTick);
-            }
             
             Player playerEntity = this.minecraft.level.getPlayerByUUID(player.uuid);
             boolean isUpsideDown = playerEntity != null && LivingEntityRenderer.isEntityUpsideDown(playerEntity);

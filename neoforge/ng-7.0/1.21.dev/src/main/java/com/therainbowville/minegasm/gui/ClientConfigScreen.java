@@ -114,7 +114,7 @@ public class ClientConfigScreen extends Screen {
                     case GLOBAL_ACCUMULATION -> "Global Accumulation";
                     case CUSTOM -> "Custom";
                 }))
-            .withValues(MinegasmConfig.GameplayMode.NORMAL, MinegasmConfig.GameplayMode.MASOCHIST, MinegasmConfig.GameplayMode.HEDONIST, MinegasmConfig.GameplayMode.ACCUMULATION, MinegasmConfig.GameplayMode.CUSTOM)
+            .withValues(MinegasmConfig.GameplayMode.NORMAL, MinegasmConfig.GameplayMode.MASOCHIST, MinegasmConfig.GameplayMode.HEDONIST, MinegasmConfig.GameplayMode.ACCUMULATION, MinegasmConfig.GameplayMode.GLOBAL_ACCUMULATION, MinegasmConfig.GameplayMode.CUSTOM)
             .withInitialValue(minegasmConfig.mode)
             .create(this.width / 2 - 155, calculateYPos(5), Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
             Component.literal("Mode"), (button, value) -> {
@@ -133,15 +133,14 @@ public class ClientConfigScreen extends Screen {
                 case 2 -> "Every Other Tick";
                 case 5 -> "Every 5 Ticks";
                 case 10 -> "Every 10 Ticks";
-                case Button.DEFAULT_HEIGHT -> "Every Second";
+                case 20 -> "Every Second";
                 default -> "error";
             }))
-            .withValues(1, 2, 5, 10, Button.DEFAULT_HEIGHT)
+            .withValues(1, 2, 5, 10, 20)
             .withInitialValue(minegasmConfig.tickFrequency.getInt())
             .create(this.width / 2 - 100, calculateYPos(6), 200, Button.DEFAULT_HEIGHT,
             Component.literal("Tick Frequency"), (button, value) -> {
                 minegasmConfig.tickFrequency = MinegasmConfig.TickFrequencyOptions.fromInt(value);
-                minegasmConfig.ticksPerSecond = Math.max(0, Button.DEFAULT_HEIGHT / value);
             })
         );
 
@@ -154,6 +153,7 @@ public class ClientConfigScreen extends Screen {
     @Override
     public void onClose() {
         ConfigContainer.bakeClientInstance();
+        EventProcessor.refreshReferenceConfig();
         this.minecraft.setScreen(lastScreen);
 //        super.onClose();
         //clientConfig.save();

@@ -1,9 +1,12 @@
 package com.therainbowville.minegasm.common;
 
+import com.therainbowville.minegasm.core.MinegasmGroup;
+import com.therainbowville.minegasm.core.MinegasmGroupInfo;
 import com.therainbowville.minegasm.gui.ClientConfigScreen;
 import com.therainbowville.minegasm.gui.JoinGroupScreen;
+import com.therainbowville.minegasm.gui.GroupScreen;
+import com.therainbowville.minegasm.network.ClientPayloadDispatcher;
 import com.therainbowville.minegasm.network.ClientPayloadHandler;
-import com.therainbowville.minegasm.network.EventPayload;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -22,8 +25,23 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.List;
+import java.util.ArrayList;
+
 @Mod(value = Minegasm.MOD_ID, dist = Dist.CLIENT) 
 public class MinegasmClient {    
+
+    public static List<MinegasmGroupInfo> groupInfo = new ArrayList<MinegasmGroupInfo>();
+    private static MinegasmGroup group = null;
+    
+    public static void setClientGroup(MinegasmGroup group) {
+        MinegasmClient.group = group;
+    }
+
+    public static MinegasmGroup getClientGroup() {
+        return group;
+    }
+
     public static final Lazy<KeyMapping> OPEN_GROUP_MENU = Lazy.of(() -> new KeyMapping(
         "key.minegasm.open_group_menu", // Will be localized using this translation key
         InputConstants.Type.KEYSYM, // Default mapping is on the keyboard
@@ -36,6 +54,7 @@ public class MinegasmClient {
         
         modEventBus.addListener(MinegasmClient::registerBindings);
         NeoForge.EVENT_BUS.addListener(MinegasmClient::onClientTick);
+        
         //container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
     
@@ -47,7 +66,11 @@ public class MinegasmClient {
     @SubscribeEvent // on the game event bus only on the physical client
     public static void onClientTick(ClientTickEvent.Post event) {
         if (OPEN_GROUP_MENU.get().consumeClick()) {
-            Minecraft.getInstance().setScreen(new JoinGroupScreen());
+            if (group == null) {
+                Minecraft.getInstance().setScreen(new JoinGroupScreen());
+            } else {
+                Minecraft.getInstance().setScreen(new GroupScreen(group.name));
+            }
         }
     }
 }

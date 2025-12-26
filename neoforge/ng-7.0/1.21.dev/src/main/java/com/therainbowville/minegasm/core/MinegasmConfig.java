@@ -1,16 +1,15 @@
 package com.therainbowville.minegasm.core;
 
 import com.therainbowville.minegasm.common.Minegasm;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Objects;
 import java.util.Map;
 import java.util.HashMap;
 
 public class MinegasmConfig<T extends MinegasmConfig.EventConfig> {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
 
     public GameplayMode mode;
 
@@ -23,6 +22,53 @@ public class MinegasmConfig<T extends MinegasmConfig.EventConfig> {
     public T harvestConfig;
     public T vitalityConfig;
     public T advancementConfig;
+    
+    public static final StreamCodec<FriendlyByteBuf, MinegasmConfig> STREAM_CODEC = StreamCodec.ofMember(MinegasmConfig::write, MinegasmConfig::read);
+    
+    private void write(FriendlyByteBuf buf) {
+        buf.writeEnum(mode);
+        EventConfig.STREAM_CODEC.encode(buf, attackConfig);
+        EventConfig.STREAM_CODEC.encode(buf, hurtConfig);
+        EventConfig.STREAM_CODEC.encode(buf, mineConfig);
+        EventConfig.STREAM_CODEC.encode(buf, placeConfig);
+        EventConfig.STREAM_CODEC.encode(buf, xpChangeConfig);
+        EventConfig.STREAM_CODEC.encode(buf, fishingConfig);
+        EventConfig.STREAM_CODEC.encode(buf, harvestConfig);
+        EventConfig.STREAM_CODEC.encode(buf, vitalityConfig);
+        EventConfig.STREAM_CODEC.encode(buf, advancementConfig);
+    }
+        
+    private static MinegasmConfig<EventConfig> read(FriendlyByteBuf buf) {
+        return new MinegasmConfig<EventConfig>( 
+            buf.readEnum(GameplayMode.class),
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf)
+        );
+    }
+    
+    public MinegasmConfig() {
+        this.mode = GameplayMode.NORMAL;
+    }
+    
+    public MinegasmConfig(GameplayMode mode, T attackConfig, T hurtConfig, T mineConfig, T placeConfig, T xpChangeConfig, T fishingConfig, T harvestConfig, T vitalityConfig, T advancementConfig) {
+        this.mode = mode;
+        this.attackConfig = attackConfig;
+        this.hurtConfig = hurtConfig;
+        this.mineConfig = mineConfig;
+        this.placeConfig = placeConfig;
+        this.xpChangeConfig = xpChangeConfig;
+        this.fishingConfig = fishingConfig;
+        this.harvestConfig = harvestConfig;
+        this.vitalityConfig = vitalityConfig;
+        this.advancementConfig = advancementConfig;
+    }
 
     public boolean accumulationModeEnabled() {
         return mode.equals(GameplayMode.ACCUMULATION) || mode.equals(GameplayMode.GLOBAL_ACCUMULATION);
@@ -108,7 +154,7 @@ public class MinegasmConfig<T extends MinegasmConfig.EventConfig> {
         accumulation.put("vitality", new EventConfig(30, MinegasmConfigDefaults.vitalityConfig));
         accumulation.put("advancement", new EventConfig(20, MinegasmConfigDefaults.advancementConfig));
 
-        final Map<String, EventConfig> custom = new HashMap<>();
+        Map<String, EventConfig> custom = new HashMap<>();
         custom.put("attack", attackConfig);
         custom.put("hurt", hurtConfig);
         custom.put("mine", mineConfig);
@@ -137,6 +183,8 @@ public class MinegasmConfig<T extends MinegasmConfig.EventConfig> {
         public float feedbackDuration;
         public int streakExtender;
         
+        public static final StreamCodec<FriendlyByteBuf, EventConfig> STREAM_CODEC = StreamCodec.ofMember(EventConfig::write, EventConfig::read);
+        
         public EventConfig(int intensity, float duration, int feedbackBonus, float feedbackDuration, int streakExtender) {
             this.intensity = intensity;
             this.duration = duration;
@@ -159,6 +207,18 @@ public class MinegasmConfig<T extends MinegasmConfig.EventConfig> {
             this.feedbackBonus = src.feedbackBonus;
             this.feedbackDuration = src.feedbackDuration;
             this.streakExtender = src.streakExtender;
+        }
+        
+        private void write(FriendlyByteBuf buf) {
+            buf.writeShort(intensity);
+            buf.writeFloat(duration);
+            buf.writeShort(feedbackBonus);
+            buf.writeFloat(feedbackDuration);
+            buf.writeShort(streakExtender);
+        }
+        
+        private static EventConfig read(FriendlyByteBuf buf) {
+            return new EventConfig(buf.readShort(), buf.readFloat(), buf.readShort(), buf.readFloat(), buf.readShort());
         }
         
         public void copyFrom(EventConfig src) {

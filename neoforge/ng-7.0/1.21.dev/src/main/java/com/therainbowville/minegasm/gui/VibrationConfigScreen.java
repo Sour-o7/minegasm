@@ -113,6 +113,14 @@ public class VibrationConfigScreen extends OptionsSubScreen {
         if (config instanceof MinegasmConfigGroup.EventConfig && isConfigGroup) {
             MinegasmConfigGroup.EventConfig eventConfig = (MinegasmConfigGroup.EventConfig) config;
             
+            CycleButton proximityButton = CycleButton.onOffBuilder(eventConfig.proximityEnabled)
+                .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
+                Component.literal("Proximety Mode"), (button, value) -> value = value );
+                
+            CycleButton broadcastButton = CycleButton.onOffBuilder(eventConfig.broadcastOnly)
+                .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
+                Component.literal("Broadcast Mode"), (button, value) -> value = value );
+            
             list.add(CycleButton.builder((MinegasmConfig.TriggerType type) ->
                 Component.literal(switch (type) {
                     case SEPARATE -> "Separate";
@@ -125,15 +133,16 @@ public class VibrationConfigScreen extends OptionsSubScreen {
             .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
             Component.literal("Type"), (button, value) -> {
                 eventConfig.type = value;
+                proximityButton.active = value == MinegasmConfig.TriggerType.SHARED;
+                broadcastButton.active = value == MinegasmConfig.TriggerType.SHARED;
             }));
+            
+            proximityButton.active = eventConfig.type == MinegasmConfig.TriggerType.SHARED;
+            broadcastButton.active = eventConfig.type == MinegasmConfig.TriggerType.SHARED;
            
-            list.add(CycleButton.onOffBuilder(eventConfig.proximityEnabled)
-                .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
-                Component.literal("Proximety Mode"), (button, value) -> value = value ));
+            list.add(proximityButton);
                 
-            list.add(CycleButton.onOffBuilder(eventConfig.broadcastOnly)
-                .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
-                Component.literal("Broadcast Mode"), (button, value) -> value = value ));
+            list.add(broadcastButton);
         }
     }
 

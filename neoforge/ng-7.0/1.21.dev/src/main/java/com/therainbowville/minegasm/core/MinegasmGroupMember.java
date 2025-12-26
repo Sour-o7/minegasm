@@ -1,15 +1,33 @@
 package com.therainbowville.minegasm.core;
 
 import com.therainbowville.minegasm.common.Minegasm;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Objects;
 import java.util.UUID;
 
 public class MinegasmGroupMember {
+    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
+    
     public final UUID uuid;
     public String name;
-    public PlayerRole role;
     public PlayerRank rank;
+    public PlayerRole role;
+    
+    public MinegasmGroupMember(UUID uuid, String name) {
+        this.uuid = uuid;
+        this.name = name;
+        this.rank = PlayerRank.MEMBER;
+        this.role = PlayerRole.SWITCH;
+    }
+    
+    public MinegasmGroupMember(MinegasmGroupMember member) {
+        this.uuid = member.uuid;
+        this.name = member.name;
+        this.rank = member.rank;
+        this.role = member.role;
+    }
     
     public MinegasmGroupMember(UUID uuid, String name, PlayerRank rank, PlayerRole role) {
         this.uuid = uuid;
@@ -17,10 +35,30 @@ public class MinegasmGroupMember {
         this.rank = rank;
         this.role = role;
     }
+
+    public static final StreamCodec<FriendlyByteBuf, MinegasmGroupMember> STREAM_CODEC = StreamCodec.ofMember(MinegasmGroupMember::write, MinegasmGroupMember::read);
+    
+    private void write(FriendlyByteBuf buf) {
+        buf.writeUUID(uuid);
+        buf.writeUtf(name);
+        buf.writeEnum(rank);
+        buf.writeEnum(role);
+    }
+    
+    private static MinegasmGroupMember read(FriendlyByteBuf buf) {
+        return new MinegasmGroupMember(buf.readUUID(), buf.readUtf(), buf.readEnum(PlayerRank.class), buf.readEnum(PlayerRole.class));
+    }
+    
+    public void print() {
+        LOGGER.info("uuid: " + uuid);
+        LOGGER.info("name: " + name);
+        LOGGER.info("rank: " + rank.getTranslateKey());
+        LOGGER.info("role: " + role.getTranslateKey());
+    }
     
     public enum PlayerRole {
-        DOM("gui." + Minegasm.MOD_ID + ".config.group.role.dom"),
         SWITCH("gui." + Minegasm.MOD_ID + ".config.group.role.switch"),
+        DOM("gui." + Minegasm.MOD_ID + ".config.group.role.dom"),
         SUB("gui." + Minegasm.MOD_ID + ".config.group.role.sub"),
         DISABLE("gui." + Minegasm.MOD_ID + ".config.group.role.disable");
 

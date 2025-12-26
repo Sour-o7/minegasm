@@ -9,7 +9,9 @@ public class MinegasmConfigClient extends MinegasmConfig {
     public boolean useGroupSettings;
     public boolean receiveVibrationsFromOthers;
     public TickFrequencyOptions tickFrequency;
-    public float ticksPerSecond;
+    
+    
+    public final float ticksPerSecond = 20;
     
     public void copyFrom(MinegasmConfigClient src) { 
         
@@ -20,7 +22,6 @@ public class MinegasmConfigClient extends MinegasmConfig {
         receiveVibrationsFromOthers = src.receiveVibrationsFromOthers;
 
         tickFrequency = src.tickFrequency;
-        ticksPerSecond = Math.max(0, 20f / tickFrequency.getInt());
 
         super.copyFrom(src);
     }
