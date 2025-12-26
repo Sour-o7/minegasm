@@ -6,7 +6,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.Minecraft;
 
-
 class PlainTextLabel extends AbstractWidget {
 
     private static Component text = Component.literal("");

@@ -1,16 +1,10 @@
 package com.therainbowville.minegasm.gui;
 
 import com.therainbowville.minegasm.common.MinegasmClient;
-import com.therainbowville.minegasm.client.ToyController;
-import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmConfig;
-import com.therainbowville.minegasm.core.MinegasmConfigClient;
-import com.therainbowville.minegasm.core.MinegasmConfigGroup;
-import com.therainbowville.minegasm.core.MinegasmConfigDefaults;
-import com.therainbowville.minegasm.config.ConfigContainer;
 import com.therainbowville.minegasm.network.ClientPayloadDispatcher;
-import net.minecraft.ChatFormatting;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -19,9 +13,8 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.client.gui.widget.ScrollPanel;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,6 +75,7 @@ public class GroupSettingsScreen extends Screen {
             group.name = s;
             submitButton.active = validator();
         });
+        name.setValue(group.name);
         this.addRenderableWidget(name);
         
         EditBox password = new EditBox(Minecraft.getInstance().font, (this.width - 210) / 2, y + 56, 210, 16, null);
@@ -90,11 +84,10 @@ public class GroupSettingsScreen extends Screen {
             group.password = s;
             submitButton.active = validator();
         });
+        password.setValue(group.password);
         this.addRenderableWidget(password);
 
         if (!isCreateGroupScreen) {
-            name.setValue(group.name);
-            password.setValue(group.password);
             password.active = group.isPrivate;
         }
             
@@ -135,10 +128,8 @@ public class GroupSettingsScreen extends Screen {
         
         this.addRenderableWidget(new Button.Builder(Component.literal("Edit Config..."), button -> 
             minecraft.setScreen(new VibrationConfigScreen(this, "Minegasm Group Config", group.config))
-            ).pos((this.width - Button.DEFAULT_WIDTH) / 2, y + 76 + 48).size(Button.SMALL_WIDTH, Button.DEFAULT_HEIGHT).build()
-        );        
-
-
+            ).pos((this.width - Button.DEFAULT_HEIGHT) / 2, y + 76 + 48).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build()
+        );
     }
     
     @Override

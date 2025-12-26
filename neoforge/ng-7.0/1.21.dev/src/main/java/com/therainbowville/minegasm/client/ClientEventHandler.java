@@ -6,14 +6,13 @@ import com.therainbowville.minegasm.core.MinegasmConfig;
 import com.therainbowville.minegasm.core.MinegasmConfigClient;
 import com.therainbowville.minegasm.config.ConfigContainer;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,7 +20,12 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.*;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -97,26 +101,6 @@ public class ClientEventHandler {
         }
     }
     
-    // This event runs every tick. Is there a way to optimize it?
-    // Replaced with onItemFished. Triggers when the player catches an item, not when bobber is ready, but should probably be better for preformance. Dunno how to measure that
-   /* @SubscribeEvent
-    public static void onTickFishing(PlayerTickEvent.Post event) {
-        if (minegasmConfig.getModeConfig("fishing").intensity == 0) { return; }
-        
-        Player player = event.getEntity();
-        if(isPlayer(player)) {
-            if (player.fishing != null) {
-                Vec3 vector = player.fishing.getDeltaMovement();
-                double x = vector.x();
-                double y = vector.y();
-                double z = vector.z();
-                if (y < -0.075 && !player.level().getFluidState(player.fishing.blockPosition()).isEmpty() && x == 0 && z == 0) {
-                    EventProcessor.startEvent("fishing");  
-                }
-            }
-        }
-    }*/
-    
     @SubscribeEvent
     public static void onAttack(AttackEntityEvent event) {
         if (isPlayer(event.getEntity())) {
@@ -128,11 +112,13 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onCriticalHit(CriticalHitEvent event) {
         MinegasmConfig config = EventProcessor.getConfig();
+        MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("attack");
+        
         if (isPlayer(event.getEntity()) && !EventProcessor.getConfig().accumulationModeEnabled()) {
             if (event.isCriticalHit()) {
-                int criticalFeedback = config.getModeConfig("attack").intensity + config.getModeConfig("attack").feedbackBonus + 20;
+                int criticalFeedback = eventConfig.intensity + eventConfig.feedbackBonus + 20;
                 // Needs to be registered on startEvent since it uses custom intensity and duration                
-                EventProcessor.startEvent("attackFeedback", criticalFeedback, Math.round(config.attackConfig.feedbackDuration * clientConfig.ticksPerSecond));
+                EventProcessor.startEvent("attackFeedback", criticalFeedback, Math.round(eventConfig.feedbackDuration * clientConfig.ticksPerSecond));
             }
         }
     }
@@ -174,11 +160,13 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onHarvest(PlayerEvent.HarvestCheck event) {
         MinegasmConfig config = EventProcessor.getConfig();
+        MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("harvest");
+        
         if (isPlayer(event.getEntity())) {
             if (config.accumulationModeEnabled()) {
                 EventProcessor.startEvent("mine", 0, 3);
             } else {
-                EventProcessor.startEvent("harvest", config.getModeConfig("harvest").intensity, 3);
+                EventProcessor.startEvent("harvest", eventConfig.intensity, 3);
             }
         }
     }
@@ -196,7 +184,8 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onXpChange(PlayerXpEvent.XpChange event) {
         MinegasmConfig config = EventProcessor.getConfig();
-        if (config.getModeConfig("xpChange").intensity == 0) { return; }
+        MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("xpChange");
+        if (eventConfig.intensity == 0) { return; }
         
         if (isPlayer(event.getEntity())) {
             
@@ -215,11 +204,11 @@ public class ClientEventHandler {
             amount = (int) Math.ceil(amount / 2);
             
             if (config.accumulationModeEnabled()) {
-                EventProcessor.startEvent("xpChange", amount, Math.round(config.getModeConfig("xpChange").duration * clientConfig.ticksPerSecond));
+                EventProcessor.startEvent("xpChange", amount, Math.round(eventConfig.duration * clientConfig.ticksPerSecond));
             } else {
                 int duration = Math.toIntExact(Math.round(Math.ceil(Math.log(amount + 0.5))));
-                EventProcessor.startEvent("xpChange", config.getModeConfig("xpChange").intensity, Math.round(duration * clientConfig.ticksPerSecond));
-                EventProcessor.startEvent("xpChangeFeedback", config.getModeConfig("xpChange").intensity + amount, Math.round(config.getModeConfig("xpChange").feedbackDuration * clientConfig.ticksPerSecond));
+                EventProcessor.startEvent("xpChange", eventConfig.intensity, Math.round(duration * clientConfig.ticksPerSecond));
+                EventProcessor.startEvent("xpChangeFeedback", eventConfig.intensity + amount, Math.round(eventConfig.feedbackDuration * clientConfig.ticksPerSecond));
             }
         }
     }
@@ -227,8 +216,8 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onAdvancementEvent(AdvancementEvent.AdvancementEarnEvent event) {
-        MinegasmConfig config = EventProcessor.getConfig();
-        if (config.getModeConfig("advancement").intensity == 0 ) { return; }
+        MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("advancement");
+        if (eventConfig.intensity == 0 ) { return; }
         
         if (isPlayer(event.getEntity())) {
             try {
@@ -240,7 +229,7 @@ public class ClientEventHandler {
                     case CHALLENGE -> 10;
                 };
                 
-                EventProcessor.startEvent("advancement", config.getModeConfig("advancement").intensity, Math.round(duration * clientConfig.ticksPerSecond));
+                EventProcessor.startEvent("advancement", eventConfig.intensity, Math.round(duration * clientConfig.ticksPerSecond));
                 EventProcessor.startFeedbackEvent("advancementFeedback", "advancement");
             } catch (Throwable e) {
                 LOGGER.throwing(e);
@@ -257,6 +246,8 @@ public class ClientEventHandler {
     public static void onVitalityTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         MinegasmConfig config = EventProcessor.getConfig();
+        MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("vitality");
+        
         if(isPlayer(player)) {
             float playerHealth = player.getHealth();
             float playerFoodLevel = player.getFoodData().getFoodLevel();
@@ -285,7 +276,7 @@ public class ClientEventHandler {
 
                 intensityCooldown = Math.max(0, intensityCooldown - 1);
             } else if (targetMet) {
-                EventProcessor.startEvent("vitality", config.getModeConfig("vitality").intensity, 1);
+                EventProcessor.startEvent("vitality", eventConfig.intensity, 1);
             }
         }
     }
@@ -313,9 +304,10 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         MinegasmConfig config = EventProcessor.getConfig();
+        MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("hurt");
         if (isPlayer(event.getEntity())) {
             if (config.mode.equals(MinegasmConfig.GameplayMode.MASOCHIST)) {
-                EventProcessor.startEvent("death", config.getModeConfig("hurt").intensity + 20, Math.round(config.getModeConfig("hurt").duration * clientConfig.ticksPerSecond));                
+                EventProcessor.startEvent("death", eventConfig.intensity + 20, Math.round(eventConfig.duration * clientConfig.ticksPerSecond));                
             }
         }
     }
@@ -327,7 +319,10 @@ public class ClientEventHandler {
             return;
         }
 
-        if (ToyController.isConnected) return;
+        if (ToyController.isConnected) {
+            EventProcessor.startEvent("loadInEvent", 5, 1 * clientConfig.tickFrequency.getInt());
+            return;
+        };
 
         if (entity instanceof Player) {
             new Thread(() -> {

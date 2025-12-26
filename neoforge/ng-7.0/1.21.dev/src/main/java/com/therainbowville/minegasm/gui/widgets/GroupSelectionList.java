@@ -1,22 +1,17 @@
 package com.therainbowville.minegasm.gui;
 
 import com.therainbowville.minegasm.core.MinegasmGroupInfo;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Nullable;
+
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.FormattedCharSequence;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GroupSelectionList extends ObjectSelectionList<GroupSelectionList.Entry> {
 

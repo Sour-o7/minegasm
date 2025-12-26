@@ -1,34 +1,22 @@
 package com.therainbowville.minegasm.gui;
 
 import com.therainbowville.minegasm.common.Minegasm;
-import com.therainbowville.minegasm.common.MinegasmClient;
-import com.therainbowville.minegasm.client.ToyController;
-import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.core.MinegasmGroup;
-import com.therainbowville.minegasm.core.MinegasmGroupInfo;
 import com.therainbowville.minegasm.core.MinegasmConfig;
-import com.therainbowville.minegasm.core.MinegasmConfigClient;
-import com.therainbowville.minegasm.core.MinegasmConfigDefaults;
-import com.therainbowville.minegasm.config.ConfigContainer;
 import com.therainbowville.minegasm.network.ClientPayloadDispatcher;
-import net.minecraft.ChatFormatting;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.client.gui.widget.ScrollPanel;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Optional;

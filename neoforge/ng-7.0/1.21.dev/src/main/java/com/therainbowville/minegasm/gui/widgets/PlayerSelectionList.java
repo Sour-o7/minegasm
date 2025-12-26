@@ -3,28 +3,21 @@ package com.therainbowville.minegasm.gui;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmGroupMember;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
-
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
+import net.minecraft.network.chat.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nullable;
 
 public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList.Entry> {
 
@@ -95,12 +88,6 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
             this.screen = screen;
             this.minecraft = Minecraft.getInstance();
             this.player = player;
-            //rewardButton = new Button.Builder(Component.literal("R"), button -> {
-            //    this.screen.setSelected(this);
-            //}).pos(0, 0).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
-            //manageButton = new Button.Builder(Component.literal("M"), button -> {
-            //    this.screen.setSelected(this);
-            //}).pos(0, 0).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
         }
 
         public void render(GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick) {

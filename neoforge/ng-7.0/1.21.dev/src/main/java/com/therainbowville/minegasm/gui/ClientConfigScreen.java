@@ -6,17 +6,18 @@ import com.therainbowville.minegasm.core.MinegasmConfig;
 import com.therainbowville.minegasm.core.MinegasmConfigClient;
 import com.therainbowville.minegasm.core.MinegasmConfigDefaults;
 import com.therainbowville.minegasm.config.ConfigContainer;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
-import net.minecraft.client.gui.components.Tooltip;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

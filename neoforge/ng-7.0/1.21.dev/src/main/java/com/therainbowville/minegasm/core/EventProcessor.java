@@ -19,7 +19,7 @@ public final class EventProcessor {
     private static final MinegasmConfigClient clientConfig = ConfigContainer.getMinegasmClient();
     private static final Map<String, EventData> activeEvents = new ConcurrentHashMap<>();
     private static MinegasmConfig config = ConfigContainer.getMinegasmClient();
-    private static UUID playerID;
+    private static UUID playerUUID;
     
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     
@@ -29,71 +29,126 @@ public final class EventProcessor {
         return config;
     }
     
+    public static MinegasmConfig.EventConfig getEventConfig(String eventType) {
+        MinegasmConfig.EventConfig eventConfig = config.getModeConfig(eventType);
+        
+        if (eventConfig instanceof MinegasmConfigGroup.EventConfig) {
+            if (((MinegasmConfigGroup.EventConfig) eventConfig).type == MinegasmConfig.TriggerType.UNENFORCED) {
+                eventConfig = clientConfig.getModeConfig(eventType);
+            }
+        }
+        
+        return eventConfig;
+    }
+    
     public static void refreshReferenceConfig () {
         MinegasmGroup group = MinegasmClient.getClientGroup();
         if (group == null || (!clientConfig.useGroupSettings && !group.config.syncConfig)) {
-            config = ConfigContainer.getMinegasmClient();            
-            LOGGER.info("Config Type: Client");
-            LOGGER.info("Config Mode: " + config.mode.getTranslateKey());
+            config = ConfigContainer.getMinegasmClient();
         } else {
             config = group.config;
-            LOGGER.info("Config Type: Group");
-            LOGGER.info("Config Mode: " + config.mode.getTranslateKey());
         }
     }
      
     public static void setPlayerUUID(UUID id) {
-        playerID = id;
+        playerUUID = id;
+    }
+    
+    public static EventData adjustToClientConfig(String eventType, EventData event) {
+        MinegasmConfig.EventConfig config = clientConfig.getModeConfig(eventType);
+        
+        /* Special Events that need processing:
+        Feedbacks
+        Critical feedback - Can be calculated without event data
+        harvest - Can be calculated without event data
+        xp - Requires xp amount
+        advancement - requires advancement type (for duration only)
+        vitality - Can be calculated without event data
+        death - Can be calculated without event data
+
+        */
+        
+        event.intensity = config.intensity;
+        event.duration = Math.round(config.duration * clientConfig.ticksPerSecond);
+        event.streakExtender = config.streakExtender;
+        
+        return event;
+    }
+    
+    public static void setEvent(String eventType, EventData event) {
+        setEvent(eventType, eventType, event);
+    }
+    
+    public static void setEvent(String eventType, String rawEventType, EventData event) {
+        if (config.getModeConfig(rawEventType) instanceof MinegasmConfigGroup.EventConfig) {
+            MinegasmConfigGroup.EventConfig eventConfig = (MinegasmConfigGroup.EventConfig) config.getModeConfig(rawEventType);
+            
+            if (eventConfig.type == MinegasmConfig.TriggerType.SHARED) {
+                ClientPayloadDispatcher.sendEventPayload(eventType, event);                
+            }
+            
+            if ((eventConfig.type == MinegasmConfig.TriggerType.SHARED || eventConfig.type == MinegasmConfig.TriggerType.SEPARATE) && !eventConfig.broadcastOnly) {
+                activeEvents.put(eventType, event);
+            } else if (eventConfig.type == MinegasmConfig.TriggerType.UNENFORCED) {
+                activeEvents.put(eventType, event);
+            }
+        } else {
+            activeEvents.put(eventType, event);
+        }
     }
     
     // Must use for accumulation mode. Recommended for standard events
     public static void startEvent(String eventType) {
-        MinegasmConfig.EventConfig eventConfig = config.getModeConfig(eventType);
+        MinegasmConfig.EventConfig eventConfig = getEventConfig(eventType);
 
-        // Add to existing event if accumulation mode is already enabled/exists
-        if (config.accumulationModeEnabled() && activeEvents.containsKey(eventType)) { 
-            activeEvents.get(eventType).intensity += eventConfig.intensity;
-            activeEvents.get(eventType).duration = Math.round(eventConfig.streakExtender * clientConfig.ticksPerSecond);
+        EventData newEvent = null;
+        if (config.accumulationModeEnabled() && activeEvents.containsKey(eventType)) {
+            newEvent = new EventData(activeEvents.get(eventType));
+            newEvent.intensity += eventConfig.intensity;
+            newEvent.duration = Math.round(eventConfig.streakExtender * clientConfig.ticksPerSecond);
         } else {
-            activeEvents.put(eventType, new EventData(playerID, eventConfig));
+            newEvent = new EventData(playerUUID, eventConfig);
         }
         
-        ClientPayloadDispatcher.sendEventPayload(eventType, activeEvents.get(eventType));
+        setEvent(eventType, newEvent);
     }
 
     // Use for event feedback. Optionally use for non-accumulation mode
     public static void startEvent(String eventType, int intensity, int duration) {
-        startEvent(eventType, intensity, duration, playerID);
+        startEvent(eventType, intensity, duration, playerUUID);
     }
 
     public static void startEvent(String eventType, int intensity, int duration, UUID origin) {
         if (duration < 1) { return; }
 
+        EventData newEvent = null;
         if (config.accumulationModeEnabled() && activeEvents.containsKey(eventType)) {
-            activeEvents.get(eventType).intensity += intensity;
-            activeEvents.get(eventType).duration = Math.max(activeEvents.get(eventType).duration, duration);
+            newEvent = new EventData(activeEvents.get(eventType));
+            newEvent.intensity += intensity;
+            newEvent.duration = Math.max(newEvent.duration, duration);
         } else {
-            activeEvents.put(eventType, new EventData(origin, intensity, duration));            
+            newEvent = new EventData(origin, intensity, duration);           
         }
         
-        ClientPayloadDispatcher.sendEventPayload(eventType, activeEvents.get(eventType));
+        setEvent(eventType, newEvent);
     }
 
     public static void startFeedbackEvent(String eventType, String rawEventType) {
-        startFeedbackEvent(eventType, rawEventType, playerID);
+        startFeedbackEvent(eventType, rawEventType, playerUUID);
     }
 
     public static void startFeedbackEvent(String eventType, String rawEventType, UUID origin) {
-        MinegasmConfig.EventConfig eventConfig = config.getModeConfig(rawEventType);
+        MinegasmConfig.EventConfig eventConfig = getEventConfig(rawEventType);
         if (eventConfig.intensity == 0) { return; }
-
-        if (config.mode.equals(MinegasmConfig.GameplayMode.GLOBAL_ACCUMULATION)) {
-            activeEvents.put(eventType, new EventData(origin, eventConfig.feedbackBonus, Math.round(eventConfig.feedbackDuration * clientConfig.ticksPerSecond)));
-        } else {
-            activeEvents.put(eventType, new EventData(origin, eventConfig.intensity + eventConfig.feedbackBonus, Math.round(eventConfig.feedbackDuration * clientConfig.ticksPerSecond)));
+        
+        EventData newEvent = null;
+        newEvent = new EventData(origin, eventConfig.feedbackBonus, Math.round(eventConfig.feedbackDuration * clientConfig.ticksPerSecond));
+        
+        if (!config.mode.equals(MinegasmConfig.GameplayMode.GLOBAL_ACCUMULATION)) {
+            newEvent.intensity += eventConfig.intensity;
         }
         
-        ClientPayloadDispatcher.sendEventPayload(eventType, activeEvents.get(eventType));
+        setEvent(eventType, rawEventType, newEvent);
     }
 
     public static void processEvents() {
@@ -137,6 +192,13 @@ public final class EventProcessor {
         private int streakExtender = 0;
         
         public static final StreamCodec<FriendlyByteBuf, EventData> STREAM_CODEC = StreamCodec.ofMember(EventData::write, EventData::read);
+
+        public EventData(EventData src) {
+            this.origin = src.origin;
+            this.intensity = src.intensity;
+            this.duration = src.duration;
+            this.streakExtender = src.streakExtender;
+        }
 
         public EventData(UUID origin, int intensity, int duration) {
             this.origin = origin;

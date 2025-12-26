@@ -45,13 +45,35 @@ public class MinegasmConfigGroup extends MinegasmConfig<MinegasmConfigGroup.Even
     }
     
     private void write(FriendlyByteBuf buf) {
-        MinegasmConfig.STREAM_CODEC.encode(buf, this);
+
+        buf.writeEnum(mode);
+        
+        EventConfig.STREAM_CODEC.encode(buf, attackConfig);
+        EventConfig.STREAM_CODEC.encode(buf, hurtConfig);
+        EventConfig.STREAM_CODEC.encode(buf, mineConfig);
+        EventConfig.STREAM_CODEC.encode(buf, placeConfig);
+        EventConfig.STREAM_CODEC.encode(buf, xpChangeConfig);
+        EventConfig.STREAM_CODEC.encode(buf, fishingConfig);
+        EventConfig.STREAM_CODEC.encode(buf, harvestConfig);
+        EventConfig.STREAM_CODEC.encode(buf, vitalityConfig);
+        EventConfig.STREAM_CODEC.encode(buf, advancementConfig);
         buf.writeBoolean(forcedRoles);
         buf.writeBoolean(syncConfig);
     }
         
     private static MinegasmConfigGroup read(FriendlyByteBuf buf) {
-        return new MinegasmConfigGroup(MinegasmConfig.STREAM_CODEC.decode(buf), buf.readBoolean(), buf.readBoolean());
+        return new MinegasmConfigGroup(new MinegasmConfig<EventConfig>(
+            buf.readEnum(GameplayMode.class),
+            EventConfig.STREAM_CODEC.decode(buf),
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf), 
+            EventConfig.STREAM_CODEC.decode(buf)
+        ), buf.readBoolean(), buf.readBoolean());
     }
     
     @Override
@@ -85,8 +107,8 @@ public class MinegasmConfigGroup extends MinegasmConfig<MinegasmConfigGroup.Even
         LOGGER.info("Mode: " + mode.getTranslateKey());
         LOGGER.info("forcedRoles: " + forcedRoles);
         LOGGER.info("syncConfig: " + syncConfig);
-        //LOGGER.info("Attack Config: ");
-        //attackConfig.print();
+        LOGGER.info("Attack Config: ");
+        attackConfig.print();
         //LOGGER.info("Hurt Config: ");
         //hurtConfig.print();
         //LOGGER.info("Mine Config: ");
@@ -128,9 +150,16 @@ public class MinegasmConfigGroup extends MinegasmConfig<MinegasmConfigGroup.Even
         
         public EventConfig(MinegasmConfig.EventConfig config) {
             super(config);
-            this.type = TriggerType.SEPARATE;
-            this.proximityEnabled = false;
-            this.broadcastOnly = false;
+            if (config instanceof EventConfig) {
+                this.type = ((EventConfig) config).type;
+                this.proximityEnabled = ((EventConfig) config).proximityEnabled;
+                this.broadcastOnly = ((EventConfig) config).broadcastOnly;
+            } else {
+                this.type = TriggerType.SEPARATE;
+                this.proximityEnabled = false;
+                this.broadcastOnly = false;
+            }
+
         }
         
         public EventConfig(int intensity, MinegasmConfig.EventConfig config) {
@@ -172,11 +201,11 @@ public class MinegasmConfigGroup extends MinegasmConfig<MinegasmConfigGroup.Even
             LOGGER.info("Type: " + type.getTranslateKey());
             LOGGER.info("Proximity: " + proximityEnabled);
             LOGGER.info("Broadcast: " + broadcastOnly);
-            LOGGER.info("Intensity: " + broadcastOnly);
-            LOGGER.info("Duration: " + broadcastOnly);
-            LOGGER.info("Feedback Bonus: " + broadcastOnly);
-            LOGGER.info("Feedback Duration: " + broadcastOnly);
-            LOGGER.info("Streak Extender: " + broadcastOnly);
+//            LOGGER.info("Intensity: " + broadcastOnly);
+//            LOGGER.info("Duration: " + broadcastOnly);
+//            LOGGER.info("Feedback Bonus: " + broadcastOnly);
+//            LOGGER.info("Feedback Duration: " + broadcastOnly);
+//            LOGGER.info("Streak Extender: " + broadcastOnly);
         }
     }
 

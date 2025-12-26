@@ -3,15 +3,11 @@ package com.therainbowville.minegasm.network;
 import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmGroupInfo;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
-import net.minecraft.server.level.ServerPlayer;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
+
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.util.List;
@@ -29,7 +25,6 @@ public class ServerPayloadDispatcher {
         PacketDistributor.sendToAllPlayers(new CommonEventPayload(eventType, event));
         //PacketDistributor.sendToPlayer(player, new EventPayload(eventType, event));
         //PacketDistributor.sendToPlayersNear(player, new EventPayload(eventType, event));
-        LOGGER.info("Event Payload Sent to Client: " + eventType);
     }
     
     public static void sendGroupPayload(MinegasmGroup group) {

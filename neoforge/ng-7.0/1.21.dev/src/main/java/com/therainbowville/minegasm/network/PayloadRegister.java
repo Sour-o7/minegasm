@@ -1,13 +1,10 @@
 package com.therainbowville.minegasm.network;
 
 import com.therainbowville.minegasm.common.Minegasm;
-import com.therainbowville.minegasm.network.ClientPayloadHandler;
-import com.therainbowville.minegasm.network.ServerPayloadHandler;
-import com.therainbowville.minegasm.network.CommonEventPayload;
-import com.therainbowville.minegasm.network.ClientboundGroupInfoPayload;
-import net.neoforged.fml.common.EventBusSubscriber;
+
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;

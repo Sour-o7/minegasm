@@ -3,16 +3,13 @@ package com.therainbowville.minegasm.network;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmGroupMember;
 import com.therainbowville.minegasm.common.MinegasmServer;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
+
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.server.level.ServerPlayer;
 
 public class ServerPayloadHandler {
     
@@ -32,10 +29,6 @@ public class ServerPayloadHandler {
     }
     
     public static void handleUpdateGroupPayload(final ServerboundUpdateGroupPayload data, final IPayloadContext context) {
-        
-        LOGGER.info("Received Group: ");
-        data.group().print();
-        
         MinegasmGroup group = MinegasmServer.getGroupMap().get(data.group().uuid);
         if (group == null) { return; }
 
@@ -49,9 +42,6 @@ public class ServerPayloadHandler {
         } else {
             ServerPayloadDispatcher.sendMessagePayload((ServerPlayer) context.player(), ServerMessage.INVALID_PERMISSION);
         }
-        
-        LOGGER.info("Updated Group: ");
-        group.print();
         
         ServerPayloadDispatcher.sendGroupPayload(group);
         ServerPayloadDispatcher.sendGroupInfoPayload(MinegasmServer.getGroupInfoList());

@@ -1,12 +1,10 @@
 package com.therainbowville.minegasm.gui;
 
 import com.therainbowville.minegasm.core.MinegasmConfig;
-import com.therainbowville.minegasm.core.MinegasmConfigClient;
 import com.therainbowville.minegasm.core.MinegasmConfigGroup;
 import com.therainbowville.minegasm.core.MinegasmConfigDefaults;
 import com.therainbowville.minegasm.config.ConfigContainer;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -17,7 +15,8 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.CommonComponents
+;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -115,11 +114,11 @@ public class VibrationConfigScreen extends OptionsSubScreen {
             
             CycleButton proximityButton = CycleButton.onOffBuilder(eventConfig.proximityEnabled)
                 .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
-                Component.literal("Proximety Mode"), (button, value) -> value = value );
+                Component.literal("Proximety Mode"), (button, value) -> eventConfig.proximityEnabled = value );
                 
             CycleButton broadcastButton = CycleButton.onOffBuilder(eventConfig.broadcastOnly)
                 .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
-                Component.literal("Broadcast Mode"), (button, value) -> value = value );
+                Component.literal("Broadcast Mode"), (button, value) -> eventConfig.broadcastOnly = value );
             
             list.add(CycleButton.builder((MinegasmConfig.TriggerType type) ->
                 Component.literal(switch (type) {

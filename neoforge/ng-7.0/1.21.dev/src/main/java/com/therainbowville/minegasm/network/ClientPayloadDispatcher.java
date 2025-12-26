@@ -3,6 +3,7 @@ package com.therainbowville.minegasm.network;
 import com.therainbowville.minegasm.common.MinegasmClient;
 import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.core.MinegasmGroup;
+
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -41,8 +42,6 @@ public class ClientPayloadDispatcher {
     }
     
     public static void sendUpdateGroupPayload(MinegasmGroup group) {
-        LOGGER.info("Sending: ");
-        group.print();
         PacketDistributor.sendToServer(new ServerboundUpdateGroupPayload(group));
     }
 }

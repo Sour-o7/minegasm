@@ -3,16 +3,16 @@ package com.therainbowville.minegasm.common;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmGroupInfo;
 import com.therainbowville.minegasm.network.ServerPayloadDispatcher;
-import com.therainbowville.minegasm.gui.ClientConfigScreen;
+
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,24 +28,6 @@ public class MinegasmServer {
     private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
     
     static Map<UUID, MinegasmGroup> minegasmGroups = new LinkedHashMap<UUID, MinegasmGroup>();
-    
-    /*static {
-        MinegasmGroup tmp = new MinegasmGroup("Test 1");
-        minegasmGroups.put(tmp.uuid, tmp);
-        
-        tmp = new MinegasmGroup("Test 2", "test");
-        minegasmGroups.put(tmp.uuid, tmp);
-        
-        tmp = new MinegasmGroup("Test 3", "abc");
-        minegasmGroups.put(tmp.uuid, tmp);
-        
-        tmp = new MinegasmGroup("Test 4", "123");
-        minegasmGroups.put(tmp.uuid, tmp);
-        
-        tmp = new MinegasmGroup("Test 5");
-        minegasmGroups.put(tmp.uuid, tmp);
-        
-    }*/
     
     public static void updateGroup(MinegasmGroup group) {
         minegasmGroups.put(group.uuid, group);
