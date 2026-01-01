@@ -17,8 +17,9 @@ import org.apache.logging.log4j.LogManager;
 // Client side processor
 public final class EventProcessor {
     private static final MinegasmConfigClient clientConfig = ConfigContainer.getMinegasmClient();
-    private static final Map<String, EventData> activeEvents = new ConcurrentHashMap<>();
     private static MinegasmConfig config = ConfigContainer.getMinegasmClient();
+    private static final Map<String, EventData> activeEvents = new ConcurrentHashMap<>();
+    private static MinegasmModifier activeModifier = null;
     private static UUID playerUUID;
     
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
@@ -33,7 +34,7 @@ public final class EventProcessor {
         MinegasmConfig.EventConfig eventConfig = config.getModeConfig(eventType);
         
         if (eventConfig instanceof MinegasmConfigGroup.EventConfig) {
-            if (((MinegasmConfigGroup.EventConfig) eventConfig).type == MinegasmConfig.TriggerType.UNENFORCED) {
+            if (((MinegasmConfigGroup.EventConfig) eventConfig).type == MinegasmConfig.TriggerType.USER_PREFERENCE) {
                 eventConfig = clientConfig.getModeConfig(eventType);
             }
         }
@@ -75,6 +76,26 @@ public final class EventProcessor {
         return event;
     }
     
+    public static void setModifier(MinegasmModifier modifier) {
+        activeModifier = modifier;
+    }
+    
+    public static void receiveEvent(String eventType, EventData event) {
+        if (!clientConfig.allowFromOthers) { return; }
+        
+        if (config instanceof MinegasmConfigGroup) {
+            MinegasmConfigGroup groupConfig = (MinegasmConfigGroup) config;
+            
+            if (!groupConfig.syncConfig && clientConfig.adaptReceivedEvents) {
+                setEvent(eventType, adjustToClientConfig(eventType, event));
+            } else {
+                setEvent(eventType, event);
+            }
+        } else {
+            setEvent(eventType, event);
+        }
+    }
+    
     public static void setEvent(String eventType, EventData event) {
         setEvent(eventType, eventType, event);
     }
@@ -89,7 +110,7 @@ public final class EventProcessor {
             
             if ((eventConfig.type == MinegasmConfig.TriggerType.SHARED || eventConfig.type == MinegasmConfig.TriggerType.SEPARATE) && !eventConfig.broadcastOnly) {
                 activeEvents.put(eventType, event);
-            } else if (eventConfig.type == MinegasmConfig.TriggerType.UNENFORCED) {
+            } else if (eventConfig.type == MinegasmConfig.TriggerType.USER_PREFERENCE) {
                 activeEvents.put(eventType, event);
             }
         } else {
@@ -159,6 +180,13 @@ public final class EventProcessor {
                 activeEvents.remove(eventType);
             }
         });
+        
+        if (activeModifier != null && activeModifier.duration > 0) {
+            activeModifier.duration = Math.min(0, activeModifier.duration - clientConfig.tickFrequency.getInt());
+            if (activeModifier.duration == 0) {
+                activeModifier = null;
+            }
+        }
     }
     
     public static void clear() {
@@ -174,6 +202,24 @@ public final class EventProcessor {
                 intensity = Math.max(intensity, event.getIntensity());
             }
         }
+        
+        if (activeModifier != null) {
+            switch (activeModifier.type) {
+                case MinegasmModifier.ModifierType.FIXED:
+                    intensity = Math.max(intensity, activeModifier.amount);
+                    break;
+                case MinegasmModifier.ModifierType.BONUS:
+                    intensity += activeModifier.amount;
+                    break;
+                case MinegasmModifier.ModifierType.OVERRIDE:
+                    intensity = activeModifier.amount;
+                    break;
+                case MinegasmModifier.ModifierType.MULTIPLIER:
+                    intensity *= activeModifier.amount;
+                    break;
+            }
+        }
+        
         return Math.min(100, intensity) / 100;
     }
     

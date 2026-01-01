@@ -91,7 +91,7 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
         }
 
         public void render(GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTick) {
-            graphics.drawString(this.minecraft.font, player.name, left + 24, top + 1, 16777215, false);
+            graphics.drawString(this.minecraft.font, player.name, left + 24, top + 1, 0xFFFFFF, false);
             
             String subtext = "";
             
@@ -108,7 +108,7 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
                 case MinegasmGroupMember.PlayerRole.DISABLE -> ""; 
             };
             
-            graphics.drawString(this.minecraft.font, subtext, left + 24, top + 12, -8355712, false);
+            graphics.drawString(this.minecraft.font, subtext, left + 24, top + 12, 0x808080, false);
             
             Player playerEntity = this.minecraft.level.getPlayerByUUID(player.uuid);
             boolean isUpsideDown = playerEntity != null && LivingEntityRenderer.isEntityUpsideDown(playerEntity);

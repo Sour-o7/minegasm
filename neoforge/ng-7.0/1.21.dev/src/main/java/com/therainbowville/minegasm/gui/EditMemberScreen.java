@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Optional;
 
-public class EditGroupMemberScreen extends Screen {
+public class EditMemberScreen extends Screen {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
     
@@ -36,11 +36,17 @@ public class EditGroupMemberScreen extends Screen {
     private static final int TEXTURE_WIDTH = 158;
     private static final int TEXTURE_HEIGHT = 88;
     private final GroupScreen lastScreen;
+    private final MinegasmGroup group;
+    private final MinegasmGroupMember player;
+    
     private final MinegasmGroupMember member;
 
-    public EditGroupMemberScreen(GroupScreen lastScreen, MinegasmGroupMember member) {
-        super(Component.literal("Enter Password"));
+    public EditMemberScreen(GroupScreen lastScreen, MinegasmGroupMember member) {
+        super(Component.literal("Edit Group Member"));
         this.lastScreen = lastScreen;
+        this.group = lastScreen.group;
+        this.player = lastScreen.player;
+        
         this.member = new MinegasmGroupMember(member);
     }
     
@@ -52,7 +58,7 @@ public class EditGroupMemberScreen extends Screen {
         
         CycleButton playerRankButton = CycleButton.builder((MinegasmGroupMember.PlayerRank rank) ->
             Component.literal(switch (rank) {
-                case LEADER -> "Leader"; // Todo: Remove
+                case LEADER -> "Leader";
                 case SUBLEADER -> "SubLeader";
                 case MEMBER -> "Member";
             }))
@@ -63,7 +69,7 @@ public class EditGroupMemberScreen extends Screen {
         Component.literal("Rank"), (button, value) -> {
             member.rank = value;
         });
-        //playerRankButton.active = isLeader;
+        playerRankButton.active = player.rank == MinegasmGroupMember.PlayerRank.LEADER;
         this.addRenderableWidget(playerRankButton);
         
         CycleButton playerRoleButton = CycleButton.builder((MinegasmGroupMember.PlayerRole role) ->
@@ -80,14 +86,13 @@ public class EditGroupMemberScreen extends Screen {
         Component.literal("Role"), (button, value) -> {
             member.role = value;
         });
-        //playerRoleButton.active = MinegasmClient.getClientGroup().config.forcedRoles;
+        playerRoleButton.active = (group.config.forcedRoles && player.rank != MinegasmGroupMember.PlayerRank.MEMBER) || member.uuid.equals(player.uuid);
         this.addRenderableWidget(playerRoleButton);
         
         Button submitButton = new Button.Builder(Component.literal("Done"), button -> {
+            ClientPayloadDispatcher.sendUpdateGroupMemberPayload(group.uuid, member);
             this.onClose();
-            //ClientPayloadDispatcher.sendJoinGroupPayload(group, Optional.of(password));
         }).pos((this.width - Button.SMALL_WIDTH ) / 2, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(Button.SMALL_WIDTH, Button.DEFAULT_HEIGHT).build();
-        //submitButton.active = false;
 
         this.addRenderableWidget(submitButton);
     }

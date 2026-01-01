@@ -14,6 +14,7 @@ public class MinegasmGroupMember {
     public String name;
     public PlayerRank rank;
     public PlayerRole role;
+    MinegasmModifier modifer = null;
     
     public MinegasmGroupMember(UUID uuid, String name) {
         this.uuid = uuid;

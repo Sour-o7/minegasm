@@ -3,6 +3,7 @@ package com.therainbowville.minegasm.network;
 import com.therainbowville.minegasm.common.MinegasmClient;
 import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.core.MinegasmGroup;
+import com.therainbowville.minegasm.core.MinegasmGroupMember;
 
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.api.distmarker.Dist;
@@ -25,6 +26,18 @@ public class ClientPayloadDispatcher {
         PacketDistributor.sendToServer(new CommonEventPayload(eventType, event));
     }
     
+    public static void sendCreateGroupPayload(MinegasmGroup group) {
+        PacketDistributor.sendToServer(new ServerboundCreateGroupPayload(group));
+    }
+    
+    public static void sendUpdateGroupPayload(MinegasmGroup group) {
+        PacketDistributor.sendToServer(new ServerboundUpdateGroupPayload(group));
+    }
+    
+    public static void sendUpdateGroupMemberPayload(UUID group, MinegasmGroupMember updated) {
+        PacketDistributor.sendToServer(new ServerboundUpdateGroupMemberPayload(group, updated));
+    }
+    
     public static void sendJoinGroupPayload(UUID uuid) {
         sendJoinGroupPayload(uuid, Optional.empty());
     }
@@ -35,13 +48,5 @@ public class ClientPayloadDispatcher {
     
     public static void sendLeaveGroupPayload() {
         PacketDistributor.sendToServer(new ServerboundLeaveGroupPayload(MinegasmClient.getClientGroup().uuid));
-    }
-    
-    public static void sendCreateGroupPayload(MinegasmGroup group) {
-        PacketDistributor.sendToServer(new ServerboundCreateGroupPayload(group));
-    }
-    
-    public static void sendUpdateGroupPayload(MinegasmGroup group) {
-        PacketDistributor.sendToServer(new ServerboundUpdateGroupPayload(group));
     }
 }

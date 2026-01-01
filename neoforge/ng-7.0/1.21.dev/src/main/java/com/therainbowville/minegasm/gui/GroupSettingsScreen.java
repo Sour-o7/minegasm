@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class GroupSettingsScreen extends Screen {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     
-    private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/group_config_screen.png");
+    private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/ui_panel_large.png");
     private static final int TEXTURE_WIDTH = 236;
     private static final int TEXTURE_HEIGHT = 176;
     private final Screen lastScreen;
@@ -128,7 +128,7 @@ public class GroupSettingsScreen extends Screen {
         
         this.addRenderableWidget(new Button.Builder(Component.literal("Edit Config..."), button -> 
             minecraft.setScreen(new VibrationConfigScreen(this, "Minegasm Group Config", group.config))
-            ).pos((this.width - Button.DEFAULT_HEIGHT) / 2, y + 76 + 48).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build()
+            ).pos((this.width - Button.DEFAULT_WIDTH) / 2, y + 76 + 48).size(Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT).build()
         );
     }
     

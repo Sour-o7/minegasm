@@ -125,9 +125,9 @@ public class VibrationConfigScreen extends OptionsSubScreen {
                     case SEPARATE -> "Separate";
                     case SHARED -> "Shared";
                     case DISABLED -> "Disabled";
-                    case UNENFORCED -> "Unenforced";
+                    case USER_PREFERENCE -> "User Preference";
                 }))
-            .withValues(MinegasmConfig.TriggerType.SEPARATE, MinegasmConfig.TriggerType.SHARED, MinegasmConfig.TriggerType.DISABLED, MinegasmConfig.TriggerType.UNENFORCED)
+            .withValues(MinegasmConfig.TriggerType.SEPARATE, MinegasmConfig.TriggerType.SHARED, MinegasmConfig.TriggerType.DISABLED, MinegasmConfig.TriggerType.USER_PREFERENCE)
             .withInitialValue(eventConfig.type)
             .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
             Component.literal("Type"), (button, value) -> {

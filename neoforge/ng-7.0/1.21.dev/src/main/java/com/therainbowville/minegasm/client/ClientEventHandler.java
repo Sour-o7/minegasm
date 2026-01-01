@@ -114,6 +114,8 @@ public class ClientEventHandler {
         MinegasmConfig config = EventProcessor.getConfig();
         MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("attack");
         
+        if (eventConfig.intensity == 0) { return; }
+        
         if (isPlayer(event.getEntity()) && !EventProcessor.getConfig().accumulationModeEnabled()) {
             if (event.isCriticalHit()) {
                 int criticalFeedback = eventConfig.intensity + eventConfig.feedbackBonus + 20;
@@ -319,11 +321,6 @@ public class ClientEventHandler {
             return;
         }
 
-        if (ToyController.isConnected) {
-            EventProcessor.startEvent("loadInEvent", 5, 1 * clientConfig.tickFrequency.getInt());
-            return;
-        };
-
         if (entity instanceof Player) {
             new Thread(() -> {
                 try {
@@ -334,7 +331,7 @@ public class ClientEventHandler {
                         playerId = uuid;
                         EventProcessor.setPlayerUUID(playerId);
                         if (ToyController.connectDevice()) {
-                            EventProcessor.startEvent("loadInEvent", 5, 1 * clientConfig.tickFrequency.getInt());
+                            EventProcessor.startEvent("loadInEvent", 5, 1 * clientConfig.ticksPerSecond);
 
                             if (clientConfig.showChatMessages) {
                                 player.displayClientMessage(Component.literal(String.format("Connected to " + ChatFormatting.GREEN + "%s" + ChatFormatting.RESET + " [%d]", ToyController.getDeviceName(), ToyController.getDeviceId())), true);

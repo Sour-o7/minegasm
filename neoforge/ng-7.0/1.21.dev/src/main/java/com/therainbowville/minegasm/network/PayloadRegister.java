@@ -60,6 +60,12 @@ public class PayloadRegister {
             ServerboundUpdateGroupPayload.STREAM_CODEC,
             ServerPayloadHandler::handleUpdateGroupPayload
         );
+        
+        registrar.playToServer(
+            ServerboundUpdateGroupMemberPayload.TYPE,
+            ServerboundUpdateGroupMemberPayload.STREAM_CODEC,
+            ServerPayloadHandler::handleUpdateGroupMemberPayload
+        );
 
         registrar.playToServer(
             ServerboundJoinGroupPayload.TYPE,

@@ -281,7 +281,7 @@ public class MinegasmConfig<T extends MinegasmConfig.EventConfig> {
         SEPARATE("gui." + Minegasm.MOD_ID + ".config.group.trigger.seperate"), // Controls intensity settings, each player experiences it seperatly
         SHARED("gui." + Minegasm.MOD_ID + ".config.group.trigger.shared"), // Controls intensity settings, each player experiences it together
         DISABLED("gui." + Minegasm.MOD_ID + ".config.group.trigger.disabled"), // Controls intensity settings, each player doesn't experience anything
-        UNENFORCED("gui." + Minegasm.MOD_ID + ".config.group.trigger.unenforced"); // Players can choose to use group settings or not 
+        USER_PREFERENCE("gui." + Minegasm.MOD_ID + ".config.group.trigger.user_preference"); // Players can choose to use group settings or not 
 
         private final String translateKey;
 

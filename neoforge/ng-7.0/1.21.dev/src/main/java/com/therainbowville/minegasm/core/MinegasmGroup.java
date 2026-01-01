@@ -101,7 +101,7 @@ public class MinegasmGroup {
         return players.size();
     }
     
-    public void addPlayer(MinegasmGroupMember player) {
+    public void updatePlayer(MinegasmGroupMember player) {
         players.put(player.uuid, player);
     }
     

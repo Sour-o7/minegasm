@@ -17,7 +17,8 @@ public final class ClientConfig {
     public final ModConfigSpec.BooleanValue showChatMessages;
     public final ModConfigSpec.EnumValue<MinegasmConfig.TickFrequencyOptions> tickFrequency;
     public final ModConfigSpec.BooleanValue useGroupSettings;
-    public final ModConfigSpec.BooleanValue receiveVibrationsFromOthers;
+    public final ModConfigSpec.BooleanValue allowFromOthers;
+    public final ModConfigSpec.BooleanValue adaptReceivedEvents;
 
     // Toy Config Settings
     public final EventConfigSpec attackConfig;
@@ -36,7 +37,8 @@ public final class ClientConfig {
         mode.set(src.mode);
         showChatMessages.set(src.showChatMessages);
         useGroupSettings.set(src.useGroupSettings);
-        receiveVibrationsFromOthers.set(src.receiveVibrationsFromOthers);
+        allowFromOthers.set(src.allowFromOthers);
+        adaptReceivedEvents.set(src.adaptReceivedEvents);
         tickFrequency.set(src.tickFrequency);
         
         attackConfig.fromEventConfig(src.attackConfig);
@@ -58,7 +60,8 @@ public final class ClientConfig {
         out.vibrate = vibrate.get();
         out.showChatMessages = showChatMessages.get();
         out.useGroupSettings = useGroupSettings.get();
-        out.receiveVibrationsFromOthers = receiveVibrationsFromOthers.get();
+        out.allowFromOthers = allowFromOthers.get();
+        out.adaptReceivedEvents = adaptReceivedEvents.get();
 
         out.tickFrequency = tickFrequency.get();
         
@@ -105,10 +108,15 @@ public final class ClientConfig {
                 .translation(Minegasm.MOD_ID + ".config.useGroupSettings")
                 .define("useGroupSettings", MinegasmConfigDefaults.ClientConfig.useGroupSettings);
                 
-                receiveVibrationsFromOthers = builder
+                allowFromOthers = builder
                 .comment("Toggle receivinig vibrations from other people")
-                .translation(Minegasm.MOD_ID + ".config.receiveVibrationsFromOthers")
-                .define("receiveVibrationsFromOthers", MinegasmConfigDefaults.ClientConfig.receiveVibrationsFromOthers);
+                .translation(Minegasm.MOD_ID + ".config.allowFromOthers")
+                .define("allowFromOthers", MinegasmConfigDefaults.ClientConfig.allowFromOthers);
+                
+                adaptReceivedEvents = builder
+                .comment("Whether or not to adapt received events. Only affects events set to User Preference")
+                .translation(Minegasm.MOD_ID + ".config.adaptReceivedEvents")
+                .define("adaptReceivedEvents", MinegasmConfigDefaults.ClientConfig.adaptReceivedEvents);
     
                 tickFrequency = builder
                 .comment("How frequently should Minegasm preform calculations. Warning: The less frequent it calculates, the more imprecise Minegasm will be.")

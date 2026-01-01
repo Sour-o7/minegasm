@@ -7,11 +7,12 @@ public class MinegasmConfigClient extends MinegasmConfig {
     public boolean vibrate;
     public boolean showChatMessages;
     public boolean useGroupSettings;
-    public boolean receiveVibrationsFromOthers;
+    public boolean allowFromOthers;
+    public boolean adaptReceivedEvents;
     public TickFrequencyOptions tickFrequency;
     
     
-    public final float ticksPerSecond = 20;
+    public final int ticksPerSecond = 20;
     
     public void copyFrom(MinegasmConfigClient src) { 
         
@@ -19,7 +20,8 @@ public class MinegasmConfigClient extends MinegasmConfig {
         vibrate = src.vibrate;
         showChatMessages = src.showChatMessages;
         useGroupSettings = src.useGroupSettings;
-        receiveVibrationsFromOthers = src.receiveVibrationsFromOthers;
+        allowFromOthers = src.allowFromOthers;
+        adaptReceivedEvents = src.adaptReceivedEvents;
 
         tickFrequency = src.tickFrequency;
 

@@ -97,9 +97,9 @@ public class ClientConfigScreen extends Screen {
             .create(this.width / 2 + 5, calculateYPos(3), Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
             Component.literal("Show Chat Messages"), (button, value) -> minegasmConfig.showChatMessages = value));
             
-        this.addRenderableWidget(CycleButton.onOffBuilder(minegasmConfig.receiveVibrationsFromOthers)
+        this.addRenderableWidget(CycleButton.onOffBuilder(minegasmConfig.allowFromOthers)
             .create(this.width / 2 - 155, calculateYPos(4), Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
-            Component.literal("Vibrations from Others"), (button, value) -> minegasmConfig.receiveVibrationsFromOthers = value));
+            Component.literal("Allow From Others"), (button, value) -> minegasmConfig.allowFromOthers = value));
 
         this.addRenderableWidget(CycleButton.onOffBuilder(minegasmConfig.useGroupSettings)
             .create(this.width / 2 + 5, calculateYPos(4), Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,

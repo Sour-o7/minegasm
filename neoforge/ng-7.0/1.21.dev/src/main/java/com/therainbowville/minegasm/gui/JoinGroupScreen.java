@@ -25,7 +25,7 @@ public class JoinGroupScreen extends Screen {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
     
-    private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/group_selection_screen.png");
+    private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/ui_selection_panel.png");
     private static final int TEXTURE_WIDTH = 236;
     private static final int TEXTURE_HEIGHT = 176;
 

@@ -97,7 +97,7 @@ public class PauseMenuButton extends Button {
         @SubscribeEvent
         public static void onGuiInit(ScreenEvent.Init.Post event) {
             if (event.getScreen() instanceof PauseScreen) { // Make sure GUI is Escape menu
-                PauseMenuButton.MenuRows menu = PauseMenuButton.MenuRows.INGAME_MENU;
+                MenuRows menu = MenuRows.INGAME_MENU;
                 int rowIdx = 3;
                 int offsetX = 4;
                 boolean onLeft = offsetX < 0;

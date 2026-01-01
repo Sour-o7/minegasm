@@ -5,6 +5,7 @@ import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.gui.JoinGroupScreen;
 import com.therainbowville.minegasm.gui.GroupScreen;
 import com.therainbowville.minegasm.gui.GroupSettingsScreen;
+import com.therainbowville.minegasm.gui.GroupPasswordScreen;
 import com.therainbowville.minegasm.gui.DialoguePopupScreen;
 
 import net.minecraft.client.Minecraft;
@@ -35,7 +36,7 @@ public class ClientPayloadHandler {
         EventProcessor.refreshReferenceConfig();
         
         Screen screen = Minecraft.getInstance().screen;
-        if (screen instanceof GroupScreen || screen instanceof JoinGroupScreen || screen instanceof GroupSettingsScreen) {
+        if (screen instanceof GroupScreen || screen instanceof JoinGroupScreen || screen instanceof GroupSettingsScreen || screen instanceof GroupPasswordScreen) {
             Minecraft.getInstance().setScreen(new GroupScreen(data.group().name));            
         }
     }

@@ -6,7 +6,8 @@ public final class MinegasmConfigDefaults {
         public static final boolean vibrate = true;
         public static final boolean showChatMessages = true;
         public static final boolean useGroupSettings = false;
-        public static final boolean receiveVibrationsFromOthers = true;
+        public static final boolean allowFromOthers = true;
+        public static final boolean adaptReceivedEvents = false;
         public static final MinegasmConfigClient.TickFrequencyOptions tickFrequency = MinegasmConfigClient.TickFrequencyOptions.EVERY_TICK;
     }
     
