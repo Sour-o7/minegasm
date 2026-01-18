@@ -10,12 +10,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.UUID;
 import java.util.List;
 
-public record ClientboundGroupInfoPayload(List<MinegasmGroupInfo> groupInfo) implements CustomPacketPayload {
+public record ClientboundGroupInfoPayload(List<MinegasmGroupInfo> info) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<ClientboundGroupInfoPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("minegasm", "clientbound_group_info_payload"));
     
     public static final StreamCodec<FriendlyByteBuf, ClientboundGroupInfoPayload> STREAM_CODEC = StreamCodec.composite(
-        MinegasmGroupInfo.STREAM_CODEC.apply(ByteBufCodecs.list()), ClientboundGroupInfoPayload::groupInfo,
+        MinegasmGroupInfo.STREAM_CODEC.apply(ByteBufCodecs.list()), ClientboundGroupInfoPayload::info,
         ClientboundGroupInfoPayload::new);
     
     @Override

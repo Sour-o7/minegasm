@@ -121,7 +121,7 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
         public boolean mouseClicked(double var1, double var3, int var5) {
             this.screen.setSelected(this);
             if (Util.getMillis() - this.lastClickTime < 250L) {
-                //this.screen.joinSelectedServer();
+                this.minecraft.setScreen(new MemberScreen(this.screen, player));
             }
 
             this.lastClickTime = Util.getMillis();

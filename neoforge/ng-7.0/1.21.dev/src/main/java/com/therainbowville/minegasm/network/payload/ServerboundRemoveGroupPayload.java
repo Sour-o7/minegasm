@@ -10,13 +10,13 @@ import java.util.UUID;
 import net.minecraft.core.UUIDUtil;
 import java.util.Optional;
 
-public record ServerboundLeaveGroupPayload(UUID uuid) implements CustomPacketPayload {
+public record ServerboundRemoveGroupPayload(UUID group) implements CustomPacketPayload {
     
-    public static final CustomPacketPayload.Type<ServerboundLeaveGroupPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("minegasm", "serverbound_leave_group_payload"));
+    public static final CustomPacketPayload.Type<ServerboundRemoveGroupPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("minegasm", "serverbound_remove_group_payload"));
     
-    public static final StreamCodec<ByteBuf, ServerboundLeaveGroupPayload> STREAM_CODEC = StreamCodec.composite(
-        UUIDUtil.STREAM_CODEC, ServerboundLeaveGroupPayload::uuid,
-        ServerboundLeaveGroupPayload::new
+    public static final StreamCodec<ByteBuf, ServerboundRemoveGroupPayload> STREAM_CODEC = StreamCodec.composite(
+        UUIDUtil.STREAM_CODEC, ServerboundRemoveGroupPayload::group,
+        ServerboundRemoveGroupPayload::new
     );
     
     @Override

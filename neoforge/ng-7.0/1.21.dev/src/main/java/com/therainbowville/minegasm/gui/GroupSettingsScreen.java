@@ -1,5 +1,6 @@
 package com.therainbowville.minegasm.gui;
 
+import com.therainbowville.minegasm.common.Minegasm;
 import com.therainbowville.minegasm.common.MinegasmClient;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmConfig;
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +27,7 @@ public class GroupSettingsScreen extends Screen {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     
     private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/ui_panel_large.png");
+	private static final ResourceLocation DELETE_ICON = ResourceLocation.fromNamespaceAndPath(Minegasm.MOD_ID, "textures/delete_icon.png");
     private static final int TEXTURE_WIDTH = 236;
     private static final int TEXTURE_HEIGHT = 176;
     private final Screen lastScreen;
@@ -121,10 +124,12 @@ public class GroupSettingsScreen extends Screen {
             })
         );
 
-        //this.addRenderableWidget(new Button.Builder(Component.literal("Edit Config..."), button -> 
-        //    minecraft.setScreen(new VibrationConfigScreen(this, "Minegasm Group Config", group.config))
-        //    ).pos(this.width / 2 + 5, y + 76 + 24).size(100, Button.DEFAULT_HEIGHT).build()
-        //);
+		// Delete Group Button
+        Button deleteButton = new Button.Builder(Component.literal(""), button -> 
+            minecraft.setScreen(new DeleteGroupScreen(this, group))
+		).pos(x + 8, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
+		deleteButton.visible = !isCreateGroupScreen;
+        this.addRenderableWidget(deleteButton);
         
         this.addRenderableWidget(new Button.Builder(Component.literal("Edit Config..."), button -> 
             minecraft.setScreen(new VibrationConfigScreen(this, "Minegasm Group Config", group.config))
@@ -154,6 +159,18 @@ public class GroupSettingsScreen extends Screen {
     @Override
     public void render(GuiGraphics graphics, int i, int j, float f) {
         super.render(graphics, i, j, f);
+		
+		int x = (this.width - TEXTURE_WIDTH) / 2;
+		
+        // Delete Icon
+		if (!isCreateGroupScreen) {
+			graphics.pose().pushPose();
+			graphics.pose().translate(x + 8 + 2, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8 + 2, 0);
+			graphics.pose().scale(0.5f, 0.5f, 1);
+			RenderSystem.setShaderTexture(0, DELETE_ICON);
+			graphics.blit(DELETE_ICON, 0, 0, 0, 0, 32, 32, 32, 32);
+			graphics.pose().popPose();
+		}
    }
    
     private void saveSettings() {

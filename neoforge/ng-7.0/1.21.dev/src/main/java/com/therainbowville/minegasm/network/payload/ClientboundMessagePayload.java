@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.ArrayList;
 import net.minecraft.core.UUIDUtil;
 
-public record ClientboundMessagePayload(int messageCode) implements CustomPacketPayload {
+public record ClientboundMessagePayload(int code) implements CustomPacketPayload {
     
     public static final CustomPacketPayload.Type<ClientboundMessagePayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("minegasm", "clientbound_message_payload"));
     
     public static final StreamCodec<ByteBuf, ClientboundMessagePayload> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.VAR_INT, ClientboundMessagePayload::messageCode,
+        ByteBufCodecs.VAR_INT, ClientboundMessagePayload::code,
         ClientboundMessagePayload::new);
     
     @Override

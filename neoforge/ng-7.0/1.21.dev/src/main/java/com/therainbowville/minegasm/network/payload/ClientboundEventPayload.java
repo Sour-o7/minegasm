@@ -11,14 +11,14 @@ import io.netty.buffer.ByteBuf;
 import java.util.UUID;
 import net.minecraft.core.UUIDUtil;
 
-public record CommonEventPayload(String eventType, EventData event) implements CustomPacketPayload {
+public record ClientboundEventPayload(String eventType, EventData event) implements CustomPacketPayload {
     
-    public static final CustomPacketPayload.Type<CommonEventPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("minegasm", "common_event_payload"));
+    public static final CustomPacketPayload.Type<ClientboundEventPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("minegasm", "clientbound_event_payload"));
     
-    public static final StreamCodec<FriendlyByteBuf, CommonEventPayload> STREAM_CODEC = StreamCodec.composite(
-        ByteBufCodecs.STRING_UTF8, CommonEventPayload::eventType,
-        EventData.STREAM_CODEC, CommonEventPayload::event,
-        CommonEventPayload::new
+    public static final StreamCodec<FriendlyByteBuf, ClientboundEventPayload> STREAM_CODEC = StreamCodec.composite(
+        ByteBufCodecs.STRING_UTF8, ClientboundEventPayload::eventType,
+        EventData.STREAM_CODEC, ClientboundEventPayload::event,
+        ClientboundEventPayload::new
     );
     
     @Override

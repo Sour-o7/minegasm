@@ -4,6 +4,7 @@ import com.therainbowville.minegasm.common.MinegasmClient;
 import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmGroupMember;
+import com.therainbowville.minegasm.core.MinegasmModifier;
 
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.api.distmarker.Dist;
@@ -23,11 +24,23 @@ public class ClientPayloadDispatcher {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
     public static void sendEventPayload(String eventType, EventProcessor.EventData event) {
-        PacketDistributor.sendToServer(new CommonEventPayload(eventType, event));
+        PacketDistributor.sendToServer(new ServerboundEventPayload(MinegasmClient.getClientGroup().uuid, eventType, event));
     }
     
     public static void sendCreateGroupPayload(MinegasmGroup group) {
         PacketDistributor.sendToServer(new ServerboundCreateGroupPayload(group));
+    }
+	
+    public static void sendRemoveGroupPayload(UUID uuid) {
+        PacketDistributor.sendToServer(new ServerboundRemoveGroupPayload(uuid));
+    }
+	
+    public static void sendRequestModifierPayload(UUID group, UUID member) {
+        PacketDistributor.sendToServer(new ServerboundRequestModifierPayload(group, member));
+    }
+	
+    public static void sendUpdateModifierPayload(UUID group, UUID member, MinegasmModifier modifier) {
+        PacketDistributor.sendToServer(new ServerboundUpdateModifierPayload(group, member, Optional.ofNullable(modifier)));
     }
     
     public static void sendUpdateGroupPayload(MinegasmGroup group) {
@@ -41,12 +54,12 @@ public class ClientPayloadDispatcher {
     public static void sendJoinGroupPayload(UUID uuid) {
         sendJoinGroupPayload(uuid, Optional.empty());
     }
-    
+	    
     public static void sendJoinGroupPayload(UUID uuid, Optional<String> password) {
         PacketDistributor.sendToServer(new ServerboundJoinGroupPayload(uuid, password));
     }
     
-    public static void sendLeaveGroupPayload() {
-        PacketDistributor.sendToServer(new ServerboundLeaveGroupPayload(MinegasmClient.getClientGroup().uuid));
+    public static void sendRemoveGroupMemberPayload(UUID group, UUID member) {
+        PacketDistributor.sendToServer(new ServerboundRemoveGroupMemberPayload(group, member));
     }
 }

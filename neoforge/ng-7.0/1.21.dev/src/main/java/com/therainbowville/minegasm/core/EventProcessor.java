@@ -182,7 +182,7 @@ public final class EventProcessor {
         });
         
         if (activeModifier != null && activeModifier.duration > 0) {
-            activeModifier.duration = Math.min(0, activeModifier.duration - clientConfig.tickFrequency.getInt());
+            activeModifier.duration = Math.max(0, activeModifier.duration - clientConfig.tickFrequency.getInt());
             if (activeModifier.duration == 0) {
                 activeModifier = null;
             }
@@ -205,7 +205,7 @@ public final class EventProcessor {
         
         if (activeModifier != null) {
             switch (activeModifier.type) {
-                case MinegasmModifier.ModifierType.FIXED:
+                case MinegasmModifier.ModifierType.SET:
                     intensity = Math.max(intensity, activeModifier.amount);
                     break;
                 case MinegasmModifier.ModifierType.BONUS:

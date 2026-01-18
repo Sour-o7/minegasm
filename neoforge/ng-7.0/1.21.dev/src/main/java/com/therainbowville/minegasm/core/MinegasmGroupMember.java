@@ -6,6 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.Optional;
 
 public class MinegasmGroupMember {
     private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
@@ -14,7 +15,7 @@ public class MinegasmGroupMember {
     public String name;
     public PlayerRank rank;
     public PlayerRole role;
-    MinegasmModifier modifer = null;
+    public MinegasmModifier modifier = null;
     
     public MinegasmGroupMember(UUID uuid, String name) {
         this.uuid = uuid;
@@ -36,6 +37,18 @@ public class MinegasmGroupMember {
         this.rank = rank;
         this.role = role;
     }
+	
+    public MinegasmGroupMember(UUID uuid, String name, PlayerRank rank, PlayerRole role, MinegasmModifier modifier) {
+		this(uuid, name, rank, role);
+		this.modifier = modifier;
+    }
+	
+	public void copyFrom(MinegasmGroupMember obj) {
+		name = obj.name;
+		rank = obj.rank;
+		role = obj.role;
+		modifier = obj.modifier;
+	}
 
     public static final StreamCodec<FriendlyByteBuf, MinegasmGroupMember> STREAM_CODEC = StreamCodec.ofMember(MinegasmGroupMember::write, MinegasmGroupMember::read);
     
@@ -44,10 +57,20 @@ public class MinegasmGroupMember {
         buf.writeUtf(name);
         buf.writeEnum(rank);
         buf.writeEnum(role);
+		//Optional<MinegasmModifier> modifier = Optional.ofNullable(this.modifier);
+		//buf.writeOptional(modifier, MinegasmModifier.STREAM_CODEC::encode);
+		//MinegasmModifier.STREAM_CODEC.encode(buf, modifier);
     }
     
     private static MinegasmGroupMember read(FriendlyByteBuf buf) {
-        return new MinegasmGroupMember(buf.readUUID(), buf.readUtf(), buf.readEnum(PlayerRank.class), buf.readEnum(PlayerRole.class));
+		
+        MinegasmGroupMember member = new MinegasmGroupMember(buf.readUUID(), buf.readUtf(), buf.readEnum(PlayerRank.class), buf.readEnum(PlayerRole.class));
+		
+		//Optional<MinegasmModifier> modifier = buf.readOptional(MinegasmModifier.STREAM_CODEC::decode);
+		//
+		//member.modifier = modifier.isPresent() ? modifier.get() : null;
+		
+		return member;
     }
     
     public void print() {

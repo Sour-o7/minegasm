@@ -15,10 +15,10 @@ public class MinegasmGroup {
     public final static int MAX_GROUP_MEMBERS = 20;
     private static final Logger LOGGER = LogManager.getLogger();
 
+	public final UUID uuid;
     public String name;
     public String password;
     public boolean isPrivate;
-    public UUID uuid;
     public MinegasmConfigGroup config;
 
     private LinkedHashMap<UUID, MinegasmGroupMember> players = new LinkedHashMap<UUID, MinegasmGroupMember>();
@@ -82,6 +82,27 @@ public class MinegasmGroup {
         }
         return receivedGroup;
     }
+	
+	public void copyFrom(MinegasmGroup group) {
+        this.name = group.name;
+        this.password = group.password;
+        this.isPrivate = group.isPrivate;
+        this.config = group.config;
+	}
+	
+	public void promoteNewLeader() {
+		if (players.size() < 1 || getPlayers().get(0).rank == MinegasmGroupMember.PlayerRank.LEADER) { return; }
+		
+		if (getPlayers().get(0).rank == MinegasmGroupMember.PlayerRank.SUBLEADER) {
+			MinegasmGroupMember oldestSubLeader = getPlayers().get(0);
+			oldestSubLeader.rank = MinegasmGroupMember.PlayerRank.LEADER;
+			players.put(oldestSubLeader.uuid, oldestSubLeader);
+		} else {
+			MinegasmGroupMember oldestMember = (MinegasmGroupMember) players.values().toArray()[0];
+			oldestMember.rank = MinegasmGroupMember.PlayerRank.LEADER;
+			players.put(oldestMember.uuid, oldestMember);
+		}
+	}
     
     public MinegasmGroupMember getPlayer(UUID uuid) {
         return players.get(uuid);
@@ -108,6 +129,17 @@ public class MinegasmGroup {
     public void removePlayer(UUID player) {
         players.remove(player);
     }
+	
+	public void process() {
+		for (MinegasmGroupMember player : players.values()) {
+			if (player.modifier != null && player.modifier.duration != -1) {
+				player.modifier.duration -= 1;
+				if (player.modifier.duration == 0) {
+					player.modifier = null;
+				}
+			}
+		}
+	}
     
     public void print() {
         LOGGER.info("Group Info");

@@ -1,1 +1,1 @@
-copy "C:\Users\Computer Admin\Documents\GitHub\minegasm\neoforge\ng-7.0\1.21.dev\build\libs\minegasm-0.5.0-1.21-Neo-21.0.167.jar" "C:\Users\Computer Admin\AppData\Roaming\.minecraft\mods"
+copy "C:\Users\turtl\Documents\GitHub\minegasm\neoforge\ng-7.0\1.21.dev\build\libs\minegasm-0.5.0-1.21-Neo-21.0.167.jar" "C:\Users\turtl\AppData\Roaming\.minecraft\mods"

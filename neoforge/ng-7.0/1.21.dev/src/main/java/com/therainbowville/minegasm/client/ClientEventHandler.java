@@ -28,19 +28,23 @@ import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.Mod;
+
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 
+@Mod(value = Minegasm.MOD_ID, dist = Dist.CLIENT) 
 @EventBusSubscriber(modid = Minegasm.MOD_ID)
 public class ClientEventHandler {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
     private static int tickCounter = -1;
-    private static int clientTickCounter = -1;
-    private static boolean paused = false;
+//    private static int clientTickCounter = -1;
+//    private static boolean paused = false;
     private static UUID playerId;
 
     private static MinegasmConfigClient clientConfig = ConfigContainer.getMinegasmClient();
@@ -59,14 +63,14 @@ public class ClientEventHandler {
         return false;
     }
 
-    private static void clearState() {
+    /*private static void clearState() {
         tickCounter = -1;
         clientTickCounter = -1;
         paused = false;
         EventProcessor.clear();
-    }
+    }*/
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         try {
             if (isPlayer(event.getEntity())) {
@@ -99,7 +103,25 @@ public class ClientEventHandler {
                 ToyController.setVibrationLevel(0); // Pause vibrations
             }
         }
-    }
+    }*/
+	
+	@SubscribeEvent
+	public static void onClientTick(ClientTickEvent.Post event) {
+		if (Minecraft.getInstance().isPaused()) {
+			ToyController.setVibrationLevel(0);
+		} else {
+			tickCounter = (tickCounter + 1) % 100;
+			if (tickCounter % clientConfig.tickFrequency.getInt() == 0)
+			{
+				EventProcessor.processEvents();
+				double newVibrationLevel = EventProcessor.getIntensity();
+
+				if (ToyController.currentVibrationLevel != newVibrationLevel) {
+					ToyController.setVibrationLevel(newVibrationLevel);
+				}
+			}
+		}
+	}
     
     @SubscribeEvent
     public static void onAttack(AttackEntityEvent event) {
@@ -294,7 +316,7 @@ public class ClientEventHandler {
         if (isPlayer(entity)) {
             try {
                 if (!config.mode.equals(MinegasmConfig.GameplayMode.MASOCHIST)) {
-                    clearState();
+                    EventProcessor.clear();
                     ToyController.setVibrationLevel(0);                        
                 }
             } catch (Throwable e) {
