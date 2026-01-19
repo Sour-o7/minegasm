@@ -156,8 +156,6 @@ public class ClientConfigScreen extends Screen {
         ConfigContainer.bakeClientInstance();
         EventProcessor.refreshReferenceConfig();
         this.minecraft.setScreen(lastScreen);
-//        super.onClose();
-        //clientConfig.save();
     }
 
     @Override

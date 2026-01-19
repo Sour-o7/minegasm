@@ -91,7 +91,6 @@ public class PauseMenuButton extends Button {
         }
     }
 
-    @EventBusSubscriber(modid = Minegasm.MOD_ID)
     public class PauseMenuButtonScreen {
 
         @SubscribeEvent

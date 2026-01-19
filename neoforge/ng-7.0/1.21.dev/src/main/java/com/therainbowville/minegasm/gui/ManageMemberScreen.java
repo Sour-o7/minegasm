@@ -34,13 +34,51 @@ import java.util.Optional;
 public class ManageMemberScreen extends MemberScreenBase {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 	
+	CycleButton rankButton;
+	Button setLeaderButton;
+	Button removeMemberButton;
+	
 	private final MemberScreen lastScreen;
 
     public ManageMemberScreen(MemberScreen lastScreen, MinegasmGroupMember member) {
-        super(lastScreen, lastScreen.group, new MinegasmGroupMember(member));
+        super(lastScreen, new MinegasmGroupMember(member));
 		super.title = "Manage User";
 		this.lastScreen = lastScreen;
     }
+	
+	private void updateButtonPermission() {
+		removeMemberButton.active = player.rank.ordinal() < member.rank.ordinal();
+		setLeaderButton.active = player.rank == MinegasmGroupMember.PlayerRank.LEADER;
+		rankButton.active = !player.uuid.equals(member.uuid);
+		rankButton.active = rankButton.active && player.rank.ordinal() < member.rank.ordinal();		
+	}
+	
+	@Override
+	public void onGroupUpdate(MinegasmGroup group) {	
+		super.onGroupUpdate(group);
+		
+		if (group != null) {
+			updateButtonPermission();			
+		}
+	}
+	
+	@Override
+	public void onPlayerUpdate(MinegasmGroupMember player) {
+		super.onPlayerUpdate(player);
+		
+		if (player.rank == MinegasmGroupMember.PlayerRank.MEMBER) {
+			this.onClose();
+		}
+	}
+	
+	@Override
+	public void onMemberUpdate(MinegasmGroupMember member) {
+		super.onMemberUpdate(member);
+		
+		if (member.rank == MinegasmGroupMember.PlayerRank.LEADER) {
+			this.onClose();
+		}
+	}
     
     @Override
     protected void init() { 
@@ -59,23 +97,21 @@ public class ManageMemberScreen extends MemberScreenBase {
         Component.literal("Rank"), (button, value) -> {
             member.rank = value;
         });
-        // Commented out for testing, remove for release
-		//rankButton.active = !lastScreen.player.uuid.equals(member.uuid);
         this.addRenderableWidget(rankButton);
 		
-		Button setLeaderButton = new Button.Builder(Component.literal("Set Leader"), button -> {
+		setLeaderButton = new Button.Builder(Component.literal("Set Leader"), button -> {
 			member.rank = MinegasmGroupMember.PlayerRank.LEADER;
         }).pos(middle + 8, y + 24 + 24).size(100, Button.DEFAULT_HEIGHT).build();
-		//setLeaderButton.active = lastScreen.player.rank == MinegasmGroupMember.PlayerRank.LEADER;
 		
 		this.addRenderableWidget(setLeaderButton);
 		
-		Button removeMemberButton = new Button.Builder(Component.literal("Remove Member"), button -> {
+		removeMemberButton = new Button.Builder(Component.literal("Remove Member"), button -> {
 			ClientPayloadDispatcher.sendRemoveGroupMemberPayload(group.uuid, member.uuid);
         }).pos(middle + 8, y + 48 + 24).size(100, Button.DEFAULT_HEIGHT).build();
-		//removeMemberButton.active = lastScreen.player.rank.ordinal() < member.rank.ordinal();
 		
 		this.addRenderableWidget(removeMemberButton);
+
+		updateButtonPermission();
 		
         this.addRenderableWidget(new Button.Builder(Component.literal("Done"), button -> {
 			

@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class JoinGroupScreen extends Screen {
+public class JoinGroupScreen extends MinegasmScreenListener {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
     
@@ -36,6 +36,13 @@ public class JoinGroupScreen extends Screen {
     public JoinGroupScreen() {
         super(Component.literal("Group Selection Screen"));
     }
+	
+	@Override
+	public void onGroupUpdate(MinegasmGroup newGroup) {
+		if (MinegasmClient.getClientGroup() != null) {
+			Minecraft.getInstance().setScreen(new GroupScreen(MinegasmClient.getClientGroup().name));
+		}
+	}
     
     @Override
     protected void init() { 
@@ -54,10 +61,13 @@ public class JoinGroupScreen extends Screen {
         
         this.addRenderableWidget(joinGroupButton);
         joinGroupButton.active = false;
+		
         
-        this.addRenderableWidget(new Button.Builder(Component.literal("Create Group"), button -> 
-            minecraft.setScreen(new GroupSettingsScreen(this, "Create Group"))
-            ).pos(this.width / 2 + 2, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(220 / 2 - 2, Button.DEFAULT_HEIGHT).build()
+        this.addRenderableWidget(new Button.Builder(Component.literal("Create Group"), button -> {        
+			MinegasmGroup group = new MinegasmGroup();
+			group.config.mode = MinegasmConfig.GameplayMode.CUSTOM;
+			minecraft.setScreen(new GroupSettingsScreen(this, "Create Group", group));
+		}).pos(this.width / 2 + 2, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(220 / 2 - 2, Button.DEFAULT_HEIGHT).build()
         );
 
     }
@@ -67,9 +77,7 @@ public class JoinGroupScreen extends Screen {
             minecraft.setScreen(new GroupPasswordScreen(this, selected.uuid));
         } else {
             ClientPayloadDispatcher.sendJoinGroupPayload(selected.uuid);
-            //minecraft.setScreen(new LoadingScreen(this));
         }
-        //this.onClose();
     };
         
     public void setSelected(GroupSelectionList.GroupEntry entry) {

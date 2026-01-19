@@ -37,6 +37,7 @@ public class PlayerSelectionList extends ObjectSelectionList<PlayerSelectionList
     }
     
     public void populateFromGroup(MinegasmGroup group) {
+		playerList.clear();
         group.getPlayers().forEach(p -> playerList.add(new PlayerEntry(screen, p)));
         refreshEntries();
     }

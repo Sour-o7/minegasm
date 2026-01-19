@@ -23,34 +23,38 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class GroupSettingsScreen extends Screen {
+public class GroupSettingsScreen extends MinegasmScreenListener {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     
     private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/ui_panel_large.png");
 	private static final ResourceLocation DELETE_ICON = ResourceLocation.fromNamespaceAndPath(Minegasm.MOD_ID, "textures/delete_icon.png");
     private static final int TEXTURE_WIDTH = 236;
     private static final int TEXTURE_HEIGHT = 176;
+
     private final Screen lastScreen;
     private final String title;
-    private final MinegasmGroup group;
     private final boolean isCreateGroupScreen;
     
     MinegasmGroup.Builder builder;
 
-    public GroupSettingsScreen(Screen lastScreen, String title) {
-        super(Component.literal(title));
+    public GroupSettingsScreen(Screen lastScreen, String title, MinegasmGroup group) {
+        super(Component.literal(title), group);
         this.lastScreen = lastScreen;
         this.title = title;
         this.isCreateGroupScreen = MinegasmClient.getClientGroup() == null;
         
-        if (isCreateGroupScreen) {
-            this.group = new MinegasmGroup();
-            group.config.mode = MinegasmConfig.GameplayMode.CUSTOM;
-        } else {
-            this.group = new MinegasmGroup(MinegasmClient.getClientGroup());
-        }
         builder = group.new Builder();
     }
+	
+	@Override
+	public void onGroupUpdate(MinegasmGroup newGroup) {
+		super.onGroupUpdate(newGroup);
+		
+		if (newGroup != null) {
+			Minecraft.getInstance().setScreen(new GroupScreen(group.name));
+		}
+	}
+
     
     private boolean validator() {
         boolean isNameValid = group.name != null && !group.name.equals("");
@@ -126,7 +130,7 @@ public class GroupSettingsScreen extends Screen {
 
 		// Delete Group Button
         Button deleteButton = new Button.Builder(Component.literal(""), button -> 
-            minecraft.setScreen(new DeleteGroupScreen(this, group))
+            minecraft.setScreen(new DeleteGroupScreen(this))
 		).pos(x + 8, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
 		deleteButton.visible = !isCreateGroupScreen;
         this.addRenderableWidget(deleteButton);
@@ -148,7 +152,6 @@ public class GroupSettingsScreen extends Screen {
         int y = (this.height - TEXTURE_HEIGHT) / 2;
         graphics.blit(GUI_TEXTURE, x, y, 0, 0, TEXTURE_WIDTH, TEXTURE_HEIGHT);
       
-        //super.renderBackground(graphics, i, j, f);
         int width = this.minecraft.font.width(this.title);
         graphics.drawString(this.minecraft.font, this.title, (this.width - width ) / 2, y + 5, 0x3F3F3F, false);
         
@@ -179,7 +182,6 @@ public class GroupSettingsScreen extends Screen {
         } else {
             ClientPayloadDispatcher.sendUpdateGroupPayload(group);
         }
-        //this.onClose();
     }
    
     @Override

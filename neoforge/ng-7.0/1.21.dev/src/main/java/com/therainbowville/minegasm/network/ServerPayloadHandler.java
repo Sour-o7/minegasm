@@ -41,6 +41,7 @@ public class ServerPayloadHandler {
     
     public static void handleUpdateGroupPayload(final ServerboundUpdateGroupPayload data, final IPayloadContext context) {
         MinegasmGroup group = MinegasmServer.getGroupMap().get(data.group().uuid);
+		LOGGER.info("Group: " + group);
         if (group == null) { return; }
 
         MinegasmGroupMember player = group.getPlayer(context.player().getUUID());
@@ -157,7 +158,10 @@ public class ServerPayloadHandler {
     
     public static void handleJoinGroupPayload(final ServerboundJoinGroupPayload data, final IPayloadContext context) {
         MinegasmGroup group = MinegasmServer.getGroupMap().get(data.uuid());
-        if (group == null) { return; }
+        if (group == null) { 
+			ServerPayloadDispatcher.sendGroupPayload((ServerPlayer) context.player(), null);
+			return;
+		}
         
         if (group.isPrivate == false || (data.password().isPresent() && group.password.equals(data.password().get()))) {
 			MinegasmGroupMember.PlayerRank rank = MinegasmGroupMember.PlayerRank.MEMBER;

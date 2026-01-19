@@ -49,6 +49,10 @@ public class MinegasmGroupMember {
 		role = obj.role;
 		modifier = obj.modifier;
 	}
+	
+	public boolean equals(MinegasmGroupMember obj) {
+		return name.equals(obj.name) && uuid.equals(obj.uuid) && rank == obj.rank && role == obj.role;
+	}
 
     public static final StreamCodec<FriendlyByteBuf, MinegasmGroupMember> STREAM_CODEC = StreamCodec.ofMember(MinegasmGroupMember::write, MinegasmGroupMember::read);
     

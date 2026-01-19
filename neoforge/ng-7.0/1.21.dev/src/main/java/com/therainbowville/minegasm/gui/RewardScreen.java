@@ -37,7 +37,7 @@ public class RewardScreen extends MemberScreenBase {
     private MinegasmModifier modifier;
 
     public RewardScreen(MemberScreen lastScreen, MinegasmGroupMember member) {
-        super(lastScreen, lastScreen.group, member);
+        super(lastScreen, member);
 		super.title = "Reward/Punish Member";
 		modifier = new MinegasmModifier(Minecraft.getInstance().player.getUUID());
 
@@ -49,6 +49,26 @@ public class RewardScreen extends MemberScreenBase {
 			}
 		}
     }
+	
+	@Override
+	public void onPlayerUpdate(MinegasmGroupMember player) {
+		super.onPlayerUpdate(player);
+		
+		if (player.role != MinegasmGroupMember.PlayerRole.DOM && player.role != MinegasmGroupMember.PlayerRole.SWITCH) {
+			this.onClose();
+		}
+	}
+	
+	@Override
+	public void onMemberUpdate(MinegasmGroupMember member) {
+		super.onMemberUpdate(member);
+		
+		if (member == null) { return; }
+		
+		if (member.role != MinegasmGroupMember.PlayerRole.SUB && member.role != MinegasmGroupMember.PlayerRole.SWITCH) {
+			this.onClose();
+		}
+	}
     
     @Override
     protected void init() { 

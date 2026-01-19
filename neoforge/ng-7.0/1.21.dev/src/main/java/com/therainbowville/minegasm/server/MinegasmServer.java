@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(value = Minegasm.MOD_ID/*, dist = Dist.DEDICATED_SERVER*/) 
+@Mod(value = Minegasm.MOD_ID) 
 public class MinegasmServer {
     private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
     

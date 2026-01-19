@@ -31,23 +31,28 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Optional;
 
-public class MemberScreenBase extends Screen {
+public class MemberScreenBase extends MinegasmScreenListener {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     
     static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/ui_half_panel.png");
     static final int TEXTURE_WIDTH = 236;
     static final int TEXTURE_HEIGHT = 176;
     final Screen lastScreen;
-    final MinegasmGroup group;
-    final MinegasmGroupMember member;
 	String title;
 
-    public MemberScreenBase(Screen lastScreen, MinegasmGroup group, MinegasmGroupMember member) {
-        super(Component.literal("Member Screen"));
+    public MemberScreenBase(Screen lastScreen, MinegasmGroupMember member) {
+        super(Component.literal("Member Screen"), member);
 		this.lastScreen = lastScreen;
-		this.group = group;
-		this.member = member;
     }
+	
+	@Override
+	public void onMemberUpdate(MinegasmGroupMember newMember) {	
+		super.onMemberUpdate(newMember);
+		
+		if (newMember == null) {
+			Minecraft.getInstance().setScreen(new GroupScreen(MinegasmClient.getClientGroup().name));
+		}
+	}
 	
 	public void updateMemberModifier(UUID memberUUID, MinegasmModifier modifier) {
 		if (member.uuid.equals(memberUUID)) {

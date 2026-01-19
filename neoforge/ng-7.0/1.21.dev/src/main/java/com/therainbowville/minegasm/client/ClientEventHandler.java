@@ -43,8 +43,6 @@ public class ClientEventHandler {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
     private static int tickCounter = -1;
-//    private static int clientTickCounter = -1;
-//    private static boolean paused = false;
     private static UUID playerId;
 
     private static MinegasmConfigClient clientConfig = ConfigContainer.getMinegasmClient();
@@ -62,48 +60,6 @@ public class ClientEventHandler {
         }
         return false;
     }
-
-    /*private static void clearState() {
-        tickCounter = -1;
-        clientTickCounter = -1;
-        paused = false;
-        EventProcessor.clear();
-    }*/
-
-    /*@SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
-        try {
-            if (isPlayer(event.getEntity())) {
-                Player player = event.getEntity();
-
-                tickCounter = (tickCounter + 1) % 100;
-                if (tickCounter % clientConfig.tickFrequency.getInt() == 0)
-                {
-                    EventProcessor.processEvents();
-                    double newVibrationLevel = EventProcessor.getIntensity();
-
-                    if (ToyController.currentVibrationLevel != newVibrationLevel)
-                        ToyController.setVibrationLevel(newVibrationLevel);
-                }
-
-            }
-        } catch (Throwable e) {
-            LOGGER.throwing(e);
-        }
-    }
-    
-    @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
-        if (tickCounter >= 0) {
-            if (tickCounter != clientTickCounter) {
-                clientTickCounter = tickCounter;
-                paused = false;
-            } else if (!paused){
-                paused = true;
-                ToyController.setVibrationLevel(0); // Pause vibrations
-            }
-        }
-    }*/
 	
 	@SubscribeEvent
 	public static void onClientTick(ClientTickEvent.Post event) {
@@ -272,6 +228,8 @@ public class ClientEventHandler {
         MinegasmConfig config = EventProcessor.getConfig();
         MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("vitality");
         
+		if (eventConfig.intensity == 0) { return; }
+		
         if(isPlayer(player)) {
             float playerHealth = player.getHealth();
             float playerFoodLevel = player.getFoodData().getFoodLevel();

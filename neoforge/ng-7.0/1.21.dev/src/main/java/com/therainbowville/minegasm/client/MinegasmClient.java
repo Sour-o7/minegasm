@@ -5,6 +5,7 @@ import com.therainbowville.minegasm.core.MinegasmGroupInfo;
 import com.therainbowville.minegasm.gui.ClientConfigScreen;
 import com.therainbowville.minegasm.gui.JoinGroupScreen;
 import com.therainbowville.minegasm.gui.GroupScreen;
+import com.therainbowville.minegasm.gui.PauseMenuButton.PauseMenuButtonScreen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
@@ -54,15 +55,17 @@ public class MinegasmClient {
         
         modEventBus.addListener(MinegasmClient::registerBindings);
         NeoForge.EVENT_BUS.addListener(MinegasmClient::onClientTick);
+		
+		NeoForge.EVENT_BUS.addListener(PauseMenuButtonScreen::onGuiInit);
 
     }
     
-    @SubscribeEvent // on the mod event bus only on the physical client
+    @SubscribeEvent
     public static void registerBindings(RegisterKeyMappingsEvent event) {
         event.register(OPEN_GROUP_MENU.get());
     }
     
-    @SubscribeEvent // on the game event bus only on the physical client
+    @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         if (OPEN_GROUP_MENU.get().consumeClick()) {
             if (group == null) {

@@ -55,6 +55,7 @@ public final class EventProcessor {
         playerUUID = id;
     }
     
+	// WIP
     public static EventData adjustToClientConfig(String eventType, EventData event) {
         MinegasmConfig.EventConfig config = clientConfig.getModeConfig(eventType);
         
@@ -293,9 +294,7 @@ public final class EventProcessor {
         }
         
         public int getIntensity() {
-            if (duration > 0)
-                return intensity;
-            else return 0;
+			return intensity;
         }
     }
     

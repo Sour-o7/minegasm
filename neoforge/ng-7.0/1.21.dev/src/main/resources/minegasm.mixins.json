@@ -2,7 +2,7 @@
   "required": true,
   "package": "com.therainbowville.minegasm.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "mixins.minegasm.refmap.json",
+  "refmap": "minegasm.mixins.refmap.json",
   "mixins": [
     "ClientAdvancementsMixin",
     "LocalPlayerMixin",

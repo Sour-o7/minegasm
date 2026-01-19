@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class MinegasmGroup {
-    public final static int MAX_GROUP_MEMBERS = 20;
     private static final Logger LOGGER = LogManager.getLogger();
 
 	public final UUID uuid;
@@ -35,6 +34,7 @@ public class MinegasmGroup {
         this.isPrivate = group.isPrivate;
         this.uuid = group.uuid;
         this.config = group.config;
+		this.players = group.players;
     }
     
     public MinegasmGroup (String name) {
@@ -87,7 +87,8 @@ public class MinegasmGroup {
         this.name = group.name;
         this.password = group.password;
         this.isPrivate = group.isPrivate;
-        this.config = group.config;
+        this.config.copyFrom(group.config);
+		this.players = group.players;
 	}
 	
 	public void promoteNewLeader() {
@@ -148,15 +149,13 @@ public class MinegasmGroup {
         LOGGER.info("UUID: " + uuid);
         LOGGER.info("Config: ");
         config.print();
-        //LOGGER.info("Players: ");
-        //players.forEach((p) -> p.print());
+        LOGGER.info("Players: ");
+        players.values().forEach((p) -> p.print());
     }
     
     public class Builder {
         
         public boolean forcedRoles = MinegasmGroup.this.config.forcedRoles;
-        //public boolean syncConfig = MinegasmGroup.this.config.syncConfig;
-        
         
         public MinegasmGroup build() {
             return new MinegasmGroup(MinegasmGroup.this.name, MinegasmGroup.this.password, new MinegasmConfigGroup(MinegasmGroup.this.config, !MinegasmGroup.this.password.equals(""), forcedRoles, MinegasmGroup.this.config.syncConfig));

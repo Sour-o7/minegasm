@@ -21,19 +21,17 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Optional;
 
-public class DeleteGroupScreen extends Screen {
+public class DeleteGroupScreen extends MinegasmScreenListener {
 	private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
 
 	private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/ui_panel_small.png");
 	private static final int TEXTURE_WIDTH = 158;
 	private static final int TEXTURE_HEIGHT = 88;
 	private final Screen lastScreen;
-	private final MinegasmGroup group;
 
-	public DeleteGroupScreen(Screen lastScreen, MinegasmGroup group) {
+	public DeleteGroupScreen(Screen lastScreen) {
 		super(Component.literal("Delete Group?"));
 		this.lastScreen = lastScreen;
-		this.group = group;
 	}
 	
 	@Override
@@ -43,7 +41,6 @@ public class DeleteGroupScreen extends Screen {
 		
 		this.addRenderableWidget(new Button.Builder(Component.literal("Confirm"), button -> {
 			ClientPayloadDispatcher.sendRemoveGroupPayload(group.uuid);
-			this.onClose();
 		}).pos((this.width - Button.SMALL_WIDTH ) / 2, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT  * 2 - 2 - 8).size(Button.SMALL_WIDTH, Button.DEFAULT_HEIGHT).build());
 			
 		this.addRenderableWidget(new Button.Builder(Component.literal("Cancel"), button -> {

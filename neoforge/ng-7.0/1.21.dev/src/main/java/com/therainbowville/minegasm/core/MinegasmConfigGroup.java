@@ -109,22 +109,22 @@ public class MinegasmConfigGroup extends MinegasmConfig<MinegasmConfigGroup.Even
         LOGGER.info("syncConfig: " + syncConfig);
         LOGGER.info("Attack Config: ");
         attackConfig.print();
-        //LOGGER.info("Hurt Config: ");
-        //hurtConfig.print();
-        //LOGGER.info("Mine Config: ");
-        //mineConfig.print();
-        //LOGGER.info("Place Config: ");
-        //placeConfig.print();
-        //LOGGER.info("XP Config: ");
-        //xpChangeConfig.print();
-        //LOGGER.info("Fishing Config: ");
-        //fishingConfig.print();
-        //LOGGER.info("Harvest Config: ");
-        //harvestConfig.print();
-        //LOGGER.info("Vitality Config: ");
-        //vitalityConfig.print();
-        //LOGGER.info("Advancement Config: ");
-        //advancementConfig.print();
+        LOGGER.info("Hurt Config: ");
+        hurtConfig.print();
+        LOGGER.info("Mine Config: ");
+        mineConfig.print();
+        LOGGER.info("Place Config: ");
+        placeConfig.print();
+        LOGGER.info("XP Config: ");
+        xpChangeConfig.print();
+        LOGGER.info("Fishing Config: ");
+        fishingConfig.print();
+        LOGGER.info("Harvest Config: ");
+        harvestConfig.print();
+        LOGGER.info("Vitality Config: ");
+        vitalityConfig.print();
+        LOGGER.info("Advancement Config: ");
+        advancementConfig.print();
     }
 
     public static class EventConfig extends MinegasmConfig.EventConfig {
@@ -201,11 +201,11 @@ public class MinegasmConfigGroup extends MinegasmConfig<MinegasmConfigGroup.Even
             LOGGER.info("Type: " + type.getTranslateKey());
             LOGGER.info("Proximity: " + proximityEnabled);
             LOGGER.info("Broadcast: " + broadcastOnly);
-//            LOGGER.info("Intensity: " + broadcastOnly);
-//            LOGGER.info("Duration: " + broadcastOnly);
-//            LOGGER.info("Feedback Bonus: " + broadcastOnly);
-//            LOGGER.info("Feedback Duration: " + broadcastOnly);
-//            LOGGER.info("Streak Extender: " + broadcastOnly);
+            LOGGER.info("Intensity: " + broadcastOnly);
+            LOGGER.info("Duration: " + broadcastOnly);
+            LOGGER.info("Feedback Bonus: " + broadcastOnly);
+            LOGGER.info("Feedback Duration: " + broadcastOnly);
+            LOGGER.info("Streak Extender: " + broadcastOnly);
         }
     }
 

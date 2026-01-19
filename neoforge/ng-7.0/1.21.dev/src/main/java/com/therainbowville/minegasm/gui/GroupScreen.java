@@ -23,35 +23,54 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class GroupScreen extends Screen {
+public class GroupScreen extends MinegasmScreenListener {
     private static final org.apache.logging.log4j.Logger LOGGER = LogManager.getLogger();
     
     private static final ResourceLocation GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath("minegasm", "textures/ui_selection_panel.png");
+    private static final int TEXTURE_WIDTH = 236;
+    private static final int TEXTURE_HEIGHT = 176;
+
     private static final ResourceLocation VIBRATION_ICON = ResourceLocation.fromNamespaceAndPath(Minegasm.MOD_ID, "textures/vibration_icon.png");
     private static final ResourceLocation VIBRATION_OTHER_ICON = ResourceLocation.fromNamespaceAndPath(Minegasm.MOD_ID, "textures/vibration_others_icon.png");
     private static final ResourceLocation GROUP_SYNC_ICON = ResourceLocation.fromNamespaceAndPath(Minegasm.MOD_ID, "textures/group_sync_icon.png");
     private static final ResourceLocation SETTINGS_ICON = ResourceLocation.fromNamespaceAndPath(Minegasm.MOD_ID, "textures/settings_icon.png");
     private static final ResourceLocation LEAVE_ICON = ResourceLocation.fromNamespaceAndPath(Minegasm.MOD_ID, "textures/leave_icon.png");
-    
-    private static final int TEXTURE_WIDTH = 236;
-    private static final int TEXTURE_HEIGHT = 176;
+
     private final String name;
-    final MinegasmGroup group = MinegasmClient.getClientGroup();
-    final MinegasmGroupMember player = group.getPlayer(Minecraft.getInstance().player.getUUID());
-    
     private MinegasmGroupMember selected = null;
+	
+	PlayerSelectionList playerList;
+	Button settingsButton;
+	
 
     public GroupScreen(String name) {
         super(Component.literal(name));
         this.name = name;
     }
+	
+	@Override
+	public void onGroupUpdate(MinegasmGroup group) {
+		super.onGroupUpdate(group);
+		
+		if (group != null) {
+			playerList.populateFromGroup(group);			
+		}
+	}
+	
+	@Override
+	public void onPlayerUpdate(MinegasmGroupMember player) {
+		super.onPlayerUpdate(player);
+		
+		settingsButton.active = player.rank == MinegasmGroupMember.PlayerRank.LEADER;
+	}
     
     @Override
     protected void init() { 
         int x = (this.width - TEXTURE_WIDTH) / 2 + 8;
         int xRight = (this.width + TEXTURE_WIDTH) / 2 - 8;
         int y = (this.height - TEXTURE_HEIGHT) / 2 + 16;
-        PlayerSelectionList playerList = new PlayerSelectionList(this, Minecraft.getInstance(), 220, 127, y, 24);
+		
+        playerList = new PlayerSelectionList(this, Minecraft.getInstance(), 220, 127, y, 24);
         playerList.setRectangle(220, 127, x, y);
         playerList.populateFromGroup(group);
         this.addRenderableWidget(playerList);
@@ -75,8 +94,8 @@ public class GroupScreen extends Screen {
 		}).pos(x + 24 * 2, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build());
 
 		// Settings Button
-        Button settingsButton = new Button.Builder(Component.literal(""), button -> 
-            minecraft.setScreen(new GroupSettingsScreen(this, "Edit Group"))
+        settingsButton = new Button.Builder(Component.literal(""), button -> 
+            minecraft.setScreen(new GroupSettingsScreen(this, "Edit Group", new MinegasmGroup(MinegasmClient.getClientGroup())))
 		).pos(xRight - 20 - 24, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build();
         this.addRenderableWidget(settingsButton);
         settingsButton.active = group.getPlayer(Minecraft.getInstance().player.getUUID()).rank == MinegasmGroupMember.PlayerRank.LEADER;
@@ -87,7 +106,6 @@ public class GroupScreen extends Screen {
             MinegasmClient.setClientGroup(null);
             Minecraft.getInstance().setScreen(new JoinGroupScreen());
         }).pos(xRight - 20, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build());
-        
     }
    
     
