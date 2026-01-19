@@ -103,9 +103,9 @@ public class VibrationConfigScreen extends OptionsSubScreen {
             config.feedbackDuration = (int) Math.round(value);
         }, () -> config.feedbackDuration );
         
-        addSlider(list, "Streak Extender", "How much this extends your streak during both accumulation modes", 0, 10, config.streakExtender, 0.1, (double value) -> {
+        /*addSlider(list, "Streak Extender", "How much this extends your streak during both accumulation modes", 0, 10, config.streakExtender, 0.1, (double value) -> {
             config.streakExtender = (int) Math.round(value);
-        }, () -> config.streakExtender );
+        }, () -> config.streakExtender );*/
     }
     
     private void addEventConfigGroupButtons(MinegasmConfig.EventConfig config, List<AbstractWidget> list) {
