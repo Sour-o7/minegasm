@@ -15,7 +15,7 @@ public class MinegasmModifier {
     public final UUID origin;
     
     public MinegasmModifier(UUID origin) {
-        this.type = ModifierType.SET;
+        this.type = ModifierType.GRANT;
         this.amount = 0;
         this.duration = -1;
         this.origin = origin;
@@ -49,7 +49,7 @@ public class MinegasmModifier {
     }
     
     public enum ModifierType {
-        SET("gui." + Minegasm.MOD_ID + ".modifier.set"), // Range: 0 - 100, Step: 1
+        GRANT("gui." + Minegasm.MOD_ID + ".modifier.grant"), // Range: 0 - 100, Step: 1
         BONUS("gui." + Minegasm.MOD_ID + ".modifier.bonus"), // Range: 0 - 100, Step: 1
         OVERRIDE("gui." + Minegasm.MOD_ID + ".modifier.override"), // Range: 0 - 100, Step: 1
         MULTIPLIER("gui." + Minegasm.MOD_ID + ".modifier.multiplier"); // Range: 0 - 2, Step: 0.05

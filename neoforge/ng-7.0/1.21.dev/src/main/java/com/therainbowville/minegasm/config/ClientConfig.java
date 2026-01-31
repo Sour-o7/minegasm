@@ -81,7 +81,7 @@ public final class ClientConfig {
     ClientConfig(final ModConfigSpec.Builder builder) {
         builder.push("minegasm");
         
-            builder.push("client");
+            //builder.push("client");
 
                 serverUrl = builder
                 .comment("The Initface URL for Minegasm to connect to")
@@ -123,21 +123,21 @@ public final class ClientConfig {
                 .translation(Minegasm.MOD_ID + ".config.mode")
                 .defineEnum("tickFrequency", MinegasmConfigDefaults.ClientConfig.tickFrequency);
 
-            builder.pop();
+            //builder.pop();
 
-            builder.push("settings");
+            //builder.push("settings");
             
                 attackConfig = new EventConfigSpec(builder, "attack", MinegasmConfigDefaults.attackConfig);
-                hurtConfig = new EventConfigSpec(builder, "hurtConfig", MinegasmConfigDefaults.hurtConfig);
-                mineConfig = new EventConfigSpec(builder, "mineConfig", MinegasmConfigDefaults.mineConfig);
-                placeConfig = new EventConfigSpec(builder, "placeConfig", MinegasmConfigDefaults.placeConfig);
-                harvestConfig = new EventConfigSpec(builder, "harvestConfig", MinegasmConfigDefaults.harvestConfig);
-                vitalityConfig = new EventConfigSpec(builder, "vitalityConfig", MinegasmConfigDefaults.vitalityConfig);
-                xpChangeConfig = new EventConfigSpec(builder, "xpChangeConfig", MinegasmConfigDefaults.xpChangeConfig);
-                advancementConfig = new EventConfigSpec(builder, "advancementConfig", MinegasmConfigDefaults.advancementConfig);
-                fishingConfig = new EventConfigSpec(builder, "fishingConfig", MinegasmConfigDefaults.fishingConfig);
+                hurtConfig = new EventConfigSpec(builder, "hurt", MinegasmConfigDefaults.hurtConfig);
+                mineConfig = new EventConfigSpec(builder, "mine", MinegasmConfigDefaults.mineConfig);
+                placeConfig = new EventConfigSpec(builder, "place", MinegasmConfigDefaults.placeConfig);
+                harvestConfig = new EventConfigSpec(builder, "harvest", MinegasmConfigDefaults.harvestConfig);
+                vitalityConfig = new EventConfigSpec(builder, "vitality", MinegasmConfigDefaults.vitalityConfig);
+                xpChangeConfig = new EventConfigSpec(builder, "xpChange", MinegasmConfigDefaults.xpChangeConfig);
+                advancementConfig = new EventConfigSpec(builder, "advancement", MinegasmConfigDefaults.advancementConfig);
+                fishingConfig = new EventConfigSpec(builder, "fishing", MinegasmConfigDefaults.fishingConfig);
 
-            builder.pop();
+            //builder.pop();
         
         builder.pop();
 

@@ -91,12 +91,12 @@ public class RewardScreen extends MemberScreenBase {
         this.addRenderableWidget(
             CycleButton.builder((MinegasmModifier.ModifierType type) ->
                 Component.literal(switch (type) {
-                    case SET -> "Set";
+                    case GRANT -> "Grant";
                     case BONUS -> "Bonus";
                     case OVERRIDE -> "Override";
                     case MULTIPLIER -> "Multiplier";
                 }))
-            .withValues(MinegasmModifier.ModifierType.SET, MinegasmModifier.ModifierType.BONUS, MinegasmModifier.ModifierType.OVERRIDE, MinegasmModifier.ModifierType.MULTIPLIER)
+            .withValues(MinegasmModifier.ModifierType.GRANT, MinegasmModifier.ModifierType.BONUS, MinegasmModifier.ModifierType.OVERRIDE, MinegasmModifier.ModifierType.MULTIPLIER)
             .withInitialValue(modifier.type)
             .create(middle + 8, y, 100, Button.DEFAULT_HEIGHT,
             Component.literal("Type"), (button, value) -> {

@@ -31,6 +31,9 @@ public class VibrationConfigScreen extends OptionsSubScreen {
     
     private List<AbstractWidget> optionList;
     private final boolean isConfigGroup;
+	
+	private static final ArrayList<MinegasmConfig.TriggerType> defaultTypes = new ArrayList<>(List.of(MinegasmConfig.TriggerType.SEPARATE, MinegasmConfig.TriggerType.SHARED, MinegasmConfig.TriggerType.DISABLED));
+	private static final ArrayList<MinegasmConfig.TriggerType> syncedTypes = new ArrayList<>(List.of(MinegasmConfig.TriggerType.SEPARATE, MinegasmConfig.TriggerType.SHARED, MinegasmConfig.TriggerType.DISABLED, MinegasmConfig.TriggerType.USER_PREFERENCE));
     
     public VibrationConfigScreen(Screen lastScreen) {
         super(lastScreen, Minecraft.getInstance().options, Component.literal("Minegasm Vibration Config"));
@@ -86,39 +89,39 @@ public class VibrationConfigScreen extends OptionsSubScreen {
         list.add(label);
     }
     
-    private void addEventConfigSliders(MinegasmConfig.EventConfig config, List<AbstractWidget> list) {
-        addSlider(list, "Intensity", null, 0, 100, config.intensity, 1, (double value) -> {
-            config.intensity = (int) Math.round(value);
-        }, () -> config.intensity );
+    private void addEventConfigSliders(MinegasmConfig.EventConfig eventConfig, List<AbstractWidget> list) {
+        addSlider(list, "Intensity", null, 0, 100, eventConfig.intensity, 1, (double value) -> {
+            eventConfig.intensity = (int) Math.round(value);
+        }, () -> eventConfig.intensity );
         
-        addSlider(list, "Duration", null, 0, 10, config.duration, 0.1, (double value) -> {
-            config.duration = (int) Math.round(value);
-        }, () -> config.duration );
+        addSlider(list, "Duration", null, 0, 10, eventConfig.duration, 0.1, (double value) -> {
+            eventConfig.duration = (int) Math.round(value);
+        }, () -> eventConfig.duration );
         
-        addSlider(list, "Feedback Bonus", "How much intensity to add for instant feedback", 0, 20, config.feedbackBonus, 1, (double value) -> {
-            config.feedbackBonus = (int) Math.round(value);
-        }, () -> config.feedbackBonus );
+        addSlider(list, "Feedback Bonus", "How much intensity to add for instant feedback", 0, 20, eventConfig.feedbackBonus, 1, (double value) -> {
+            eventConfig.feedbackBonus = (int) Math.round(value);
+        }, () -> eventConfig.feedbackBonus );
         
-        addSlider(list, "Feedback Duration", "How long feedback should last", 0, 10, config.feedbackDuration, 0.1, (double value) -> {
-            config.feedbackDuration = (int) Math.round(value);
-        }, () -> config.feedbackDuration );
+        addSlider(list, "Feedback Duration", "How long feedback should last", 0, 10, eventConfig.feedbackDuration, 0.1, (double value) -> {
+            eventConfig.feedbackDuration = (int) Math.round(value);
+        }, () -> eventConfig.feedbackDuration );
         
-        /*addSlider(list, "Streak Extender", "How much this extends your streak during both accumulation modes", 0, 10, config.streakExtender, 0.1, (double value) -> {
-            config.streakExtender = (int) Math.round(value);
-        }, () -> config.streakExtender );*/
+        /*addSlider(list, "Streak Extender", "How much this extends your streak during both accumulation modes", 0, 10, eventConfig.streakExtender, 0.1, (double value) -> {
+            eventConfig.streakExtender = (int) Math.round(value);
+        }, () -> eventConfig.streakExtender );*/
     }
     
-    private void addEventConfigGroupButtons(MinegasmConfig.EventConfig config, List<AbstractWidget> list) {
-        if (config instanceof MinegasmConfigGroup.EventConfig && isConfigGroup) {
-            MinegasmConfigGroup.EventConfig eventConfig = (MinegasmConfigGroup.EventConfig) config;
+    private void addEventConfigGroupButtons(MinegasmConfig.EventConfig eventConfig, List<AbstractWidget> list) {
+        if (eventConfig instanceof MinegasmConfigGroup.EventConfig && isConfigGroup) {
+            MinegasmConfigGroup.EventConfig eventConfigGroup = (MinegasmConfigGroup.EventConfig) eventConfig;
             
-            CycleButton proximityButton = CycleButton.onOffBuilder(eventConfig.proximityEnabled)
+            CycleButton proximityButton = CycleButton.onOffBuilder(eventConfigGroup.proximityEnabled)
                 .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
-                Component.literal("Proximety Mode"), (button, value) -> eventConfig.proximityEnabled = value );
+                Component.literal("Proximety Mode"), (button, value) -> eventConfigGroup.proximityEnabled = value );
                 
-            CycleButton broadcastButton = CycleButton.onOffBuilder(eventConfig.broadcastOnly)
+            CycleButton broadcastButton = CycleButton.onOffBuilder(eventConfigGroup.broadcastOnly)
                 .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
-                Component.literal("Broadcast Mode"), (button, value) -> eventConfig.broadcastOnly = value );
+                Component.literal("Broadcast Mode"), (button, value) -> eventConfigGroup.broadcastOnly = value );
             
             list.add(CycleButton.builder((MinegasmConfig.TriggerType type) ->
                 Component.literal(switch (type) {
@@ -127,17 +130,19 @@ public class VibrationConfigScreen extends OptionsSubScreen {
                     case DISABLED -> "Disabled";
                     case USER_PREFERENCE -> "User Preference";
                 }))
-            .withValues(MinegasmConfig.TriggerType.SEPARATE, MinegasmConfig.TriggerType.SHARED, MinegasmConfig.TriggerType.DISABLED, MinegasmConfig.TriggerType.USER_PREFERENCE)
-            .withInitialValue(eventConfig.type)
+            .withValues(() -> {
+				return ((MinegasmConfigGroup) config).syncConfig;
+			}, defaultTypes, syncedTypes)
+            .withInitialValue(eventConfigGroup.type)
             .create(0, 0, Button.DEFAULT_WIDTH, Button.DEFAULT_HEIGHT,
             Component.literal("Type"), (button, value) -> {
-                eventConfig.type = value;
+                eventConfigGroup.type = value;
                 proximityButton.active = value == MinegasmConfig.TriggerType.SHARED;
                 broadcastButton.active = value == MinegasmConfig.TriggerType.SHARED;
             }));
             
-            proximityButton.active = eventConfig.type == MinegasmConfig.TriggerType.SHARED;
-            broadcastButton.active = eventConfig.type == MinegasmConfig.TriggerType.SHARED;
+            proximityButton.active = eventConfigGroup.type == MinegasmConfig.TriggerType.SHARED;
+            broadcastButton.active = eventConfigGroup.type == MinegasmConfig.TriggerType.SHARED;
            
             list.add(proximityButton);
                 

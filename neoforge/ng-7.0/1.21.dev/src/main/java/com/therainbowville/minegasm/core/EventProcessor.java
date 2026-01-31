@@ -35,7 +35,9 @@ public final class EventProcessor {
         
         if (eventConfig instanceof MinegasmConfigGroup.EventConfig) {
             if (((MinegasmConfigGroup.EventConfig) eventConfig).type == MinegasmConfig.TriggerType.USER_PREFERENCE) {
-                eventConfig = clientConfig.getModeConfig(eventType);
+				if (!clientConfig.useGroupSettings) {
+					eventConfig = clientConfig.getModeConfig(eventType);					
+				}
             }
         }
         
@@ -206,7 +208,7 @@ public final class EventProcessor {
         
         if (activeModifier != null) {
             switch (activeModifier.type) {
-                case MinegasmModifier.ModifierType.SET:
+                case MinegasmModifier.ModifierType.GRANT:
                     intensity = Math.max(intensity, activeModifier.amount);
                     break;
                 case MinegasmModifier.ModifierType.BONUS:

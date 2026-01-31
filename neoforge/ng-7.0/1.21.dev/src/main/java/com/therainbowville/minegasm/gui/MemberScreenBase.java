@@ -130,7 +130,7 @@ public class MemberScreenBase extends MinegasmScreenListener {
 			String originName = originPlayer.getName().getString();
 			
 			String modifierType = switch (member.modifier.type) {
-				case MinegasmModifier.ModifierType.SET -> "Set";
+				case MinegasmModifier.ModifierType.GRANT -> "Grant";
 				case MinegasmModifier.ModifierType.BONUS -> "Bonus";
 				case MinegasmModifier.ModifierType.OVERRIDE -> "Override";
 				case MinegasmModifier.ModifierType.MULTIPLIER -> "Multiplier";

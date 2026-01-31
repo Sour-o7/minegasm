@@ -2,6 +2,7 @@ package com.therainbowville.minegasm.gui;
 
 import com.therainbowville.minegasm.common.Minegasm;
 import com.therainbowville.minegasm.common.MinegasmClient;
+import com.therainbowville.minegasm.core.EventProcessor;
 import com.therainbowville.minegasm.core.MinegasmGroup;
 import com.therainbowville.minegasm.core.MinegasmConfig;
 import com.therainbowville.minegasm.core.MinegasmGroupMember;
@@ -84,7 +85,8 @@ public class GroupScreen extends MinegasmScreenListener {
 		// Use Group Settings
         this.addRenderableWidget(new Button.Builder(Component.literal(""), button -> {
 			ConfigContainer.getMinegasmClient().useGroupSettings = !ConfigContainer.getMinegasmClient().useGroupSettings;
-            ConfigContainer.bakeClientInstance();	
+            ConfigContainer.bakeClientInstance();
+			EventProcessor.refreshReferenceConfig();
 		}).pos(x + 24, (this.height + TEXTURE_HEIGHT) / 2 - Button.DEFAULT_HEIGHT - 8).size(Button.DEFAULT_HEIGHT, Button.DEFAULT_HEIGHT).build());
 		
 		// Receive Vibrations from Others

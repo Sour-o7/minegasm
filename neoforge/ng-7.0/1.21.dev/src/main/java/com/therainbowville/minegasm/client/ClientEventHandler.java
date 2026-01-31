@@ -89,7 +89,6 @@ public class ClientEventHandler {
     
     @SubscribeEvent
     public static void onCriticalHit(CriticalHitEvent event) {
-        MinegasmConfig config = EventProcessor.getConfig();
         MinegasmConfig.EventConfig eventConfig = EventProcessor.getEventConfig("attack");
         
         if (eventConfig.intensity == 0) { return; }
