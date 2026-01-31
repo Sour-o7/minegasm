@@ -1,5 +1,12 @@
 package com.therainbowville.minegasm.network;
 
+import com.therainbowville.minegasm.common.MinegasmServer;
+import com.therainbowville.minegasm.core.MinegasmGroup;
+import com.therainbowville.minegasm.core.MinegasmGroupMember;
+
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+
 import com.therainbowville.minegasm.core.MinegasmModifier;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,7 +18,7 @@ import io.netty.buffer.ByteBuf;
 import java.util.UUID;
 import net.minecraft.core.UUIDUtil;
 
-public record ServerboundRequestModifierPayload(UUID group, UUID member) implements CustomPacketPayload {
+public record ServerboundRequestModifierPayload(UUID group, UUID member) implements IServerboundPayload {
     
     public static final CustomPacketPayload.Type<ServerboundRequestModifierPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("minegasm", "serverbound_request_modifier_payload"));
     
@@ -26,4 +33,14 @@ public record ServerboundRequestModifierPayload(UUID group, UUID member) impleme
         return TYPE;
     }
     
+	@Override
+	public void handleOnServer(Player player) {
+        MinegasmGroup serverGroup = MinegasmServer.getGroupMap().get(group);
+        if (serverGroup == null) { return; }
+		
+		MinegasmGroupMember member = serverGroup.getPlayer(player.getUUID());
+		if (member == null) { return; }
+		
+		ServerPayloadDispatcher.sendModifierPayload((ServerPlayer) player, member);
+	}
 }
